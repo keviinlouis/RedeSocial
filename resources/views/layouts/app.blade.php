@@ -76,48 +76,8 @@
 
 
     <!--   Core JS Files   -->
-    <script src="{{ asset('js/vendor/jquery-3.2.1.min.js') }}" type="text/javascript"></script>
-    <script src="{{ asset('js/vendor/bootstrap.min.js') }}" type="text/javascript"></script>
-    <script src="{{ asset('js/vendor/material.min.js') }}" type="text/javascript"></script>
-    <script src="{{ asset('js/vendor/perfect-scrollbar.jquery.min.js') }}" type="text/javascript"></script>
-    <!-- Library for adding dinamically elements -->
-    <script src="{{ asset('js/vendor/arrive.min.js') }}" type="text/javascript"></script>
-    <!-- Forms Validations Plugin -->
-    <script src="{{ asset('js/vendor/jquery.validate.min.js') }}"></script>
-    <!-- Promise Library for SweetAlert2 working on IE -->
-    <script src="{{ asset('js/vendor/es6-promise-auto.min.js') }}"></script>
-    <!--  Plugin for Date Time Picker and Full Calendar Plugin-->
-    <script src="{{ asset('js/vendor/moment.min.js') }}"></script>
-    <!--  Charts Plugin, full documentation here: https://gionkunz.github.io/chartist-js/vendor/ -->
-    <script src="{{ asset('js/vendor/chartist.min.js') }}"></script>
-    <!--  Plugin for the Wizard, full documentation here: https://github.com/VinceG/twitter-bootstrap-wizard -->
-    <script src="{{ asset('js/vendor/jquery.bootstrap-wizard.js') }}"></script>
-    <!--  Notifications Plugin, full documentation here: http://bootstrap-notify.remabledesigns.com/    -->
-    <script src="{{ asset('js/vendor/bootstrap-notify.js') }}"></script>
-    <!--   Sharrre Library    -->
-    <script src="{{ asset('js/vendor/jquery.sharrre.js') }}"></script>
-    <!--  Plugin for the DateTimePicker, full documentation here: https://eonasdan.github.io/bootstrap-datetimepicker/ -->
-    <script src="{{ asset('js/vendor/bootstrap-datetimepicker.js') }}"></script>
-    <!-- Vector Map plugin, full documentation here: http://jvectormap.com/documentation/ -->
-    <script src="{{ asset('js/vendor/jquery-jvectormap.js') }}"></script>
-    <!-- Sliders Plugin, full documentation here: https://refreshless.com/nouislider/ -->
-    <script src="{{ asset('js/vendor/nouislider.min.js') }}"></script>
-    <!--  Google Maps Plugin    -->
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAFPQibxeDaLIUHsC6_KqDdFaUdhrbhZ3M"></script>
-    <!--  Plugin for Select, full documentation here: http://silviomoreto.github.io/bootstrap-select -->
-    <script src="{{ asset('js/vendor/jquery.select-bootstrap.js') }}"></script>
-    <!--  DataTables.net Plugin, full documentation here: https://datatables.net/    -->
-    <script src="{{ asset('js/vendor/jquery.datatables.js') }}"></script>
-    <!-- Sweet Alert 2 plugin, full documentation here: https://limonte.github.io/sweetalert2/ -->
-    <script src="{{ asset('js/vendor/sweetalert2.js') }}"></script>
-    <!-- Plugin for Fileupload, full documentation here: http://www.jasny.net/bootstrap/javascript/#fileinput -->
-    <script src="{{ asset('js/vendor/jasny-bootstrap.min.js') }}"></script>
-    <!--  Full Calendar Plugin, full documentation here: https://github.com/fullcalendar/fullcalendar    -->
-    <script src="{{ asset('js/vendor/fullcalendar.min.js') }}"></script>
-    <!-- Plugin for Tags, full documentation here: https://github.com/bootstrap-tagsinput/bootstrap-tagsinputs  -->
-    <script src="{{ asset('js/vendor/jquery.tagsinput.js') }}"></script>
-    <!-- Material Dashboard javascript methods -->
-    <script src="{{ asset('js/vendor/material-dashboard.js?v=1.2.0')}}"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js" type="text/javascript"></script>
+    <script src="{{ asset('js/vendor/bootstrap.js') }}" type="text/javascript"></script>
 
     <!-- Scripts -->
     <script src="{{ asset('js/app.js') }}"></script>

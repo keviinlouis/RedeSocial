@@ -10,6 +10,7 @@ class PostsController extends Controller
 {
     public function getPosts(){
         $posts = Auth::user()->followingPosts();
+
         return view('posts', get_defined_vars());
     }
 
