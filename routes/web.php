@@ -14,5 +14,5 @@
 Auth::routes();
 
 Route::get('/', 'HomeController@index')->name('home');
-Route::get('/getPosts', 'PostsController@getPosts')->name('getPosts');
-Route::get('/', 'HomeController@index')->name('home');
+Route::get('/getPosts/{last?}/{direction?}', 'PostsController@getPosts')->name('getPosts');
+Route::post('/sendPost', 'PostsController@create')->name('sendPosts');

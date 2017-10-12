@@ -1,6 +1,5 @@
 $(document).ready(function(){
-   $('#post').on('click', sendPost());
-
+   $('#post').onclick = sendPost();
     getPosts();
 });
 
@@ -30,7 +29,7 @@ function sendPost(){
             url: '',
             type: 'post',
             data:{
-                _token: token,
+                _token: CSRFTOKEN,
                 text: text.val()
             },
             beforeSend: function(){

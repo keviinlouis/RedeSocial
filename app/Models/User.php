@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use Auth;
+use Carbon\Carbon;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 
@@ -39,7 +41,25 @@ class User extends Authenticatable
         return $this->belongsToMany('App\Models\User', 'user_follows', 'following_id', 'followed_id');
     }
 
-    public function followingPosts(){
-        return $this->following()->with(['posts'])->get();
+    public function followingPosts($between){
+        $post = new Post();
+        $ids =  $this->following()->pluck('id')->toArray();
+        $ids[count($ids)] = Auth::user()->id;
+
+        $posts = $post
+            ->whereIn('user_id', $ids)
+            ->whereBetween("created_at", $between)
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        if(count($posts) <= 0){
+            $posts = $post
+                ->whereIn('user_id', $ids)
+                ->where("created_at", "<", $between[0])
+                ->limit(10)
+                ->orderBy('created_at', 'desc')
+                ->get();
+        }
+        return $posts;
     }
 }
