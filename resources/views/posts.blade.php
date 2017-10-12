@@ -7,7 +7,7 @@
             <div class="panel-body">
                 <div class="row">
                     <div class="col-md-9">
-                        <p>{{$post->text}}</p>
+                        <p style="word-break:break-all ">{{$post->text}}</p>
                     </div>
                     <div class="col-md-3">
                         <p>{{$post->created_at->diffForHumans()}}</p>
@@ -18,6 +18,6 @@
     @endforeach
 @else
     <div data-index="last">
-        Ops, parece que não há nenhum post ainda, siga mais pessoas!
+        Ops, parece que não encontramos mais nenhum post, siga mais pessoas!
     </div>
 @endif

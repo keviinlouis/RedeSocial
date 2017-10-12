@@ -1,7 +1,7 @@
 <?php
 /**
  * A helper file for Laravel 5, to provide autocomplete information to your IDE
- * Generated for Laravel 5.5.14 on 2017-10-10.
+ * Generated for Laravel 5.5.14 on 2017-10-12.
  *
  * @author Barry vd. Heuvel <barryvdh@gmail.com>
  * @see https://github.com/barryvdh/laravel-ide-helper
@@ -1636,7 +1636,7 @@ namespace Illuminate\Support\Facades {
         /**
          * Get the currently authenticated user.
          *
-         * @return \App\Models\User|null
+         * @return \App\Models\User|null 
          * @static 
          */ 
         public static function user()
@@ -1671,7 +1671,7 @@ namespace Illuminate\Support\Facades {
          * Log the given user ID into the application without sessions or cookies.
          *
          * @param mixed $id
-         * @return \App\Models\User|false
+         * @return \App\Models\User|false 
          * @static 
          */ 
         public static function onceUsingId($id)
@@ -1735,7 +1735,7 @@ namespace Illuminate\Support\Facades {
          *
          * @param mixed $id
          * @param bool $remember
-         * @return \App\Models\User|false
+         * @return \App\Models\User|false 
          * @static 
          */ 
         public static function loginUsingId($id, $remember = false)
@@ -1782,7 +1782,7 @@ namespace Illuminate\Support\Facades {
         /**
          * Get the last user we attempted to authenticate.
          *
-         * @return \App\Models\User
+         * @return \App\Models\User 
          * @static 
          */ 
         public static function getLastAttempted()
@@ -1884,7 +1884,7 @@ namespace Illuminate\Support\Facades {
         /**
          * Return the currently cached user.
          *
-         * @return \App\Models\User|null
+         * @return \App\Models\User|null 
          * @static 
          */ 
         public static function getUser()
@@ -1930,7 +1930,7 @@ namespace Illuminate\Support\Facades {
         /**
          * Determine if the current user is authenticated.
          *
-         * @return \App\Models\User
+         * @return \App\Models\User 
          * @throws \Illuminate\Auth\AuthenticationException
          * @static 
          */ 
@@ -3234,6 +3234,98 @@ namespace Illuminate\Support\Facades {
         public static function getQueuedCookies()
         {
             return \Illuminate\Cookie\CookieJar::getQueuedCookies();
+        }
+         
+    }
+
+    class Crypt {
+        
+        /**
+         * Determine if the given key and cipher combination is valid.
+         *
+         * @param string $key
+         * @param string $cipher
+         * @return bool 
+         * @static 
+         */ 
+        public static function supported($key, $cipher)
+        {
+            return \Illuminate\Encryption\Encrypter::supported($key, $cipher);
+        }
+        
+        /**
+         * Create a new encryption key for the given cipher.
+         *
+         * @param string $cipher
+         * @return string 
+         * @static 
+         */ 
+        public static function generateKey($cipher)
+        {
+            return \Illuminate\Encryption\Encrypter::generateKey($cipher);
+        }
+        
+        /**
+         * Encrypt the given value.
+         *
+         * @param mixed $value
+         * @param bool $serialize
+         * @return string 
+         * @throws \Illuminate\Contracts\Encryption\EncryptException
+         * @static 
+         */ 
+        public static function encrypt($value, $serialize = true)
+        {
+            return \Illuminate\Encryption\Encrypter::encrypt($value, $serialize);
+        }
+        
+        /**
+         * Encrypt a string without serialization.
+         *
+         * @param string $value
+         * @return string 
+         * @static 
+         */ 
+        public static function encryptString($value)
+        {
+            return \Illuminate\Encryption\Encrypter::encryptString($value);
+        }
+        
+        /**
+         * Decrypt the given value.
+         *
+         * @param mixed $payload
+         * @param bool $unserialize
+         * @return string 
+         * @throws \Illuminate\Contracts\Encryption\DecryptException
+         * @static 
+         */ 
+        public static function decrypt($payload, $unserialize = true)
+        {
+            return \Illuminate\Encryption\Encrypter::decrypt($payload, $unserialize);
+        }
+        
+        /**
+         * Decrypt the given string without unserialization.
+         *
+         * @param string $payload
+         * @return string 
+         * @static 
+         */ 
+        public static function decryptString($payload)
+        {
+            return \Illuminate\Encryption\Encrypter::decryptString($payload);
+        }
+        
+        /**
+         * Get the encryption key.
+         *
+         * @return string 
+         * @static 
+         */ 
+        public static function getKey()
+        {
+            return \Illuminate\Encryption\Encrypter::getKey();
         }
          
     }
@@ -13070,6 +13162,165 @@ namespace Collective\Html {
  
 }
 
+namespace Orangehill\Iseed\Facades { 
+
+    class Iseed {
+        
+        /**
+         * 
+         *
+         * @static 
+         */ 
+        public static function readStubFile($file)
+        {
+            return \Orangehill\Iseed\Iseed::readStubFile($file);
+        }
+        
+        /**
+         * Generates a seed file.
+         *
+         * @param string $table
+         * @param string $database
+         * @param int $max
+         * @param string $prerunEvent
+         * @param string $postunEvent
+         * @return bool 
+         * @throws Orangehill\Iseed\TableNotFoundException
+         * @static 
+         */ 
+        public static function generateSeed($table, $database = null, $max = 0, $exclude = null, $prerunEvent = null, $postrunEvent = null, $dumpAuto = true, $indexed = true, $orderBy = null, $direction = 'ASC')
+        {
+            return \Orangehill\Iseed\Iseed::generateSeed($table, $database, $max, $exclude, $prerunEvent, $postrunEvent, $dumpAuto, $indexed, $orderBy, $direction);
+        }
+        
+        /**
+         * Get a seed folder path
+         *
+         * @return string 
+         * @static 
+         */ 
+        public static function getSeedPath()
+        {
+            return \Orangehill\Iseed\Iseed::getSeedPath();
+        }
+        
+        /**
+         * Get the Data
+         *
+         * @param string $table
+         * @return Array 
+         * @static 
+         */ 
+        public static function getData($table, $max, $exclude = null, $orderBy = null, $direction = 'ASC')
+        {
+            return \Orangehill\Iseed\Iseed::getData($table, $max, $exclude, $orderBy, $direction);
+        }
+        
+        /**
+         * Repacks data read from the database
+         *
+         * @param array|object $data
+         * @return array 
+         * @static 
+         */ 
+        public static function repackSeedData($data)
+        {
+            return \Orangehill\Iseed\Iseed::repackSeedData($data);
+        }
+        
+        /**
+         * Checks if a database table exists
+         *
+         * @param string $table
+         * @return boolean 
+         * @static 
+         */ 
+        public static function hasTable($table)
+        {
+            return \Orangehill\Iseed\Iseed::hasTable($table);
+        }
+        
+        /**
+         * Generates a seed class name (also used as a filename)
+         *
+         * @param string $table
+         * @return string 
+         * @static 
+         */ 
+        public static function generateClassName($table)
+        {
+            return \Orangehill\Iseed\Iseed::generateClassName($table);
+        }
+        
+        /**
+         * Get the path to the stub file.
+         *
+         * @return string 
+         * @static 
+         */ 
+        public static function getStubPath()
+        {
+            return \Orangehill\Iseed\Iseed::getStubPath();
+        }
+        
+        /**
+         * Populate the place-holders in the seed stub.
+         *
+         * @param string $class
+         * @param string $stub
+         * @param string $table
+         * @param string $data
+         * @param int $chunkSize
+         * @param string $prerunEvent
+         * @param string $postunEvent
+         * @return string 
+         * @static 
+         */ 
+        public static function populateStub($class, $stub, $table, $data, $chunkSize = null, $prerunEvent = null, $postrunEvent = null, $indexed = true)
+        {
+            return \Orangehill\Iseed\Iseed::populateStub($class, $stub, $table, $data, $chunkSize, $prerunEvent, $postrunEvent, $indexed);
+        }
+        
+        /**
+         * Create the full path name to the seed file.
+         *
+         * @param string $name
+         * @param string $path
+         * @return string 
+         * @static 
+         */ 
+        public static function getPath($name, $path)
+        {
+            return \Orangehill\Iseed\Iseed::getPath($name, $path);
+        }
+        
+        /**
+         * Cleans the iSeed section
+         *
+         * @return bool 
+         * @static 
+         */ 
+        public static function cleanSection()
+        {
+            return \Orangehill\Iseed\Iseed::cleanSection();
+        }
+        
+        /**
+         * Updates the DatabaseSeeder file's run method (kudoz to: https://github.com/JeffreyWay/Laravel-4-Generators)
+         *
+         * @param string $className
+         * @return bool 
+         * @static 
+         */ 
+        public static function updateDatabaseSeederRunMethod($className)
+        {
+            return \Orangehill\Iseed\Iseed::updateDatabaseSeederRunMethod($className);
+        }
+         
+    }
+ 
+}
+
 
 namespace  { 
 
@@ -13090,6 +13341,8 @@ namespace  {
     class Config extends \Illuminate\Support\Facades\Config {}
 
     class Cookie extends \Illuminate\Support\Facades\Cookie {}
+
+    class Crypt extends \Illuminate\Support\Facades\Crypt {}
 
     class DB extends \Illuminate\Support\Facades\DB {}
 
@@ -15184,6 +15437,8 @@ namespace  {
     class Form extends \Collective\Html\FormFacade {}
 
     class Html extends \Collective\Html\HtmlFacade {}
+
+    class Iseed extends \Orangehill\Iseed\Facades\Iseed {}
  
 }
 

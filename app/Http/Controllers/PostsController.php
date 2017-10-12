@@ -14,11 +14,10 @@ class PostsController extends Controller
         if(!is_null($last)){
             $last = Carbon::createFromFormat("Y-m-d H:i:s", base64_decode($last));
             if($direction === 'first'){
-                $until = Carbon::now();
-                $between = [$last->toDateTimeString(), $until->toDateTimeString()];
+                $between = [$last->toDateTimeString(), Carbon::now()->toDateTimeString()];
             }else{
-                $until = $last->subHour(1);
-                $between = [$until->toDateTimeString(), $last->toDateTimeString()];
+                $between = [$last->subHour(1)->toDateTimeString(), $last->addHour(1)->toDateTimeString()];
+
             }
         }else{
             $until = Carbon::now()->subHour(3);

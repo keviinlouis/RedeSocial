@@ -3,7 +3,6 @@
 namespace App\Models;
 
 use Auth;
-use Carbon\Carbon;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 
@@ -43,6 +42,7 @@ class User extends Authenticatable
 
     public function followingPosts($between){
         $post = new Post();
+
         $ids =  $this->following()->pluck('id')->toArray();
         $ids[count($ids)] = Auth::user()->id;
 
@@ -52,14 +52,18 @@ class User extends Authenticatable
             ->orderBy('created_at', 'desc')
             ->get();
 
-        if(count($posts) <= 0){
+        if(count($posts) <= 10){
+
             $posts = $post
                 ->whereIn('user_id', $ids)
                 ->where("created_at", "<", $between[0])
-                ->limit(10)
                 ->orderBy('created_at', 'desc')
+                ->limit(10)
                 ->get();
+
+
         }
+
         return $posts;
     }
 }

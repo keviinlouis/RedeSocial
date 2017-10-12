@@ -1,5 +1,8 @@
 let emptyPost = false;
 let results = $('#posts');
+let fragmentFromString = function (strHTML) {
+    return document.createRange().createContextualFragment(strHTML);
+};
 $(document).ready(function(){
    $('#post').click(function(){
        sendPost();
@@ -89,7 +92,7 @@ function sendPost(){
 
             },
             success: function(data){
-                results.prepend(data.html);
+                results.hide().prepend(data.html).fadeIn(300);
             },
             complete: function(){
                 text.val('');
