@@ -40,7 +40,7 @@ class User extends Authenticatable
         return $this->belongsToMany('App\Models\User', 'user_follows', 'following_id', 'followed_id');
     }
 
-    public function followingPosts($between){
+    public function followingPosts($between, $first){
         $post = new Post();
 
         $ids =  $this->following()->pluck('id')->toArray();
@@ -56,7 +56,7 @@ class User extends Authenticatable
 
             $posts = $post
                 ->whereIn('user_id', $ids)
-                ->where("created_at", "<", $between[0])
+                ->where("created_at", "<", $between[$first])
                 ->orderBy('created_at', 'desc')
                 ->limit(10)
                 ->get();

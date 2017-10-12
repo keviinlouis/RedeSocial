@@ -5,21 +5,24 @@
     <div class="row">
         <div class="col-md-4">
             <div class="panel panel-default">
-                <div class="panel-heading">Postar</div>
+                <div class="panel-heading"><h4>Postar</h4></div>
                 <div class="panel-body">
                     {{Form::textarea('postText', null, ['id' => 'postText', 'class' => "form-control", "style" => "resize: none", "rows" => 3, "maxlength" => 140])}}
-                    <div class="alert alert-danger small " style="margin-top: 10px; display:none" id="postError">Insira algum texto antes de postar</div>
-                    <button class="btn btn-default pull-right" style="margin-top: 10px" id="post">Postar :)</button>
+                    <div class="alert alert-danger small " style="margin-top: 10px; display:none" id="errorSendPost">Insira algum texto antes de postar</div>
+                    <button class="btn btn-default pull-right" style="margin-top: 10px" id="buttonSendPost">Postar :)</button>
+                    <div id="loadingSendPost" style="height: 69px; margin-right: 31px;display: none" class="cssload-container pull-right">
+                        <div class="cssload-whirlpool"></div>
+                    </div>
                 </div>
             </div>
             <div class="panel panel-default">
                 <div class="panel-heading">
                     <div class="row">
                         <div class="col-md-10">
-                            Que tal seguir esses?
+                            <h4>Que tal seguir esses?</h4>
                         </div>
                         <div class="col-md-2">
-                            <i class="material-icons" id="reloadUsersToFollow" style="cursor: pointer; color: grey" >autorenew</i>
+                            <h4><i class="material-icons" id="reloadUsersToFollow" style="cursor: pointer; color: grey" >autorenew</i></h4>
                         </div>
                     </div>
                 </div>
@@ -35,7 +38,7 @@
         </div>
         <div class="col-md-8">
             <div class="panel panel-default">
-                <div class="panel-heading">Dashboard</div>
+                <div class="panel-heading"><h4>Dashboard</h4></div>
 
                 <div class="panel-body" >
                     <div id="posts">

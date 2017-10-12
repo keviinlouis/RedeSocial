@@ -4,7 +4,7 @@ let usersToFollow = $('#usersToFollow');
 let actualShowingUsers;
 
 $(document).ready(function(){
-   $('#post').click(function(){
+   $('#buttonSendPost').click(function(){
        sendPost();
    });
    $('#reloadUsersToFollow').click(function(){
@@ -23,11 +23,11 @@ $(window).scroll(function () {
 
 function getPosts(direction){
     let loading = $('#loading');
-
     let lastPost = results.children();
     let url = '/getPosts';
+
     if(lastPost.length > 0){
-        if(direction==='last') {
+        if(direction ==='last') {
             lastPost = lastPost[lastPost.length-1].getAttribute('data-index');
             if(lastPost === "last"){
                 emptyPost = true;
@@ -40,6 +40,7 @@ function getPosts(direction){
         }
         url += '/'+direction;
     }
+
     if($('.wait').length <=0 && !emptyPost){
         $.ajax({
             url: url,
@@ -61,13 +62,17 @@ function getPosts(direction){
                 }else if(direction ==='first'){
                     results.prepend(data.html).fadeIn(200);
                 }
+                $('.removePost').click(function(){
+                    event.preventDefault();
+                    removePost($(this));
+                })
 
             },
             error: function(data){
-
+                showError(data.responseJSON.message)
             },
             complete: function(){
-                loading.fadeOut(300);
+                loading.hide();
                 results.removeClass('wait');
             }
         })
@@ -79,11 +84,10 @@ function getPosts(direction){
 }
 
 function sendPost(){
-
+    let loading = $('#loadingSendPost');
     let text = $('#postText');
-    let error =  $('#postError');
-
-    error.fadeOut(300);
+    let error =  $('#errorSendPost');
+    let button = $('#buttonSendPost');
     if(text.val().length > 0){
         $.ajax({
             url: '/sendPost',
@@ -93,16 +97,24 @@ function sendPost(){
                 text: text.val()
             },
             beforeSend: function(){
-
+                error.fadeOut(300);
+                button.hide();
+                loading.fadeIn(300);
             },
             success: function(data){
                 results.hide().prepend(data.html).fadeIn(300);
+                $('.removePost').click(function(){
+                    event.preventDefault();
+                    removePost($(this));
+                })
             },
             complete: function(){
                 text.val('');
+                loading.hide();
+                button.fadeIn(300);
             },
             error: function(data){
-                error.html(data.responseJSON.message)
+                showError(data.responseJSON.message)
             }
         })
     }else{
@@ -128,6 +140,9 @@ function getUsersToFollow(){
         success: function(data){
             actualShowingUsers = data.actualShowingUsers;
             usersToFollow.html(data.html);
+            $('.followFromUsersToFollow').click(function(){
+                onFollow($(this));
+            });
         },
         complete: function(){
             loading.hide();
@@ -136,7 +151,7 @@ function getUsersToFollow(){
 
         },
         error: function(data){
-            usersToFollow.html(data.responseJSON.message);
+            showError(data.responseJSON.message)
         }
 
     })
@@ -161,4 +176,28 @@ function onFollow(el){
             getUsersToFollow();
         }
     }, 1500);
+}
+
+function removePost(el){
+    let id = el.attr('data-index');
+    let post = el.parentsUntil($('#posts'));
+    post.fadeOut(200);
+    console.log('teste');
+    $.ajax({
+        url: '/deletePost',
+        type: 'delete',
+        data:{
+            _token: CSRFTOKEN,
+            id: id
+        },
+        success: function(){
+            post.remove();
+            showSuccess('Removido com Sucesso!');
+        },
+        error: function(data){
+            showError(data.responseJSON.message)
+        }
+    })
+
+
 }

@@ -15,13 +15,6 @@
           </li>
       @endforeach
   </ul>
-  <script>
-      $(document).ready(function(){
-          $('.followFromUsersToFollow').click(function(){
-                onFollow($(this));
-          });
-      })
-  </script>
 @else
     <p>Opa, parece que não tem mais usuários para seguir</p>
 @endif

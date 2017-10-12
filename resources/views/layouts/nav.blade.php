@@ -53,3 +53,10 @@
         </div>
     </div>
 </nav>
+<div class="alert alert-danger msg-master" id="error-master">
+
+</div>
+
+<div class="alert alert-success msg-master" id="success-master">
+
+</div>
