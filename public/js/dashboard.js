@@ -182,7 +182,8 @@ function removePost(el){
     let id = el.attr('data-index');
     let post = el.parentsUntil($('#posts'));
     post.fadeOut(200);
-    console.log('teste');
+    showSuccess('Removido com Sucesso!');
+
     $.ajax({
         url: '/deletePost',
         type: 'delete',
@@ -192,7 +193,7 @@ function removePost(el){
         },
         success: function(){
             post.remove();
-            showSuccess('Removido com Sucesso!');
+
         },
         error: function(data){
             showError(data.responseJSON.message)
