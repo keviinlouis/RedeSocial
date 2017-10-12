@@ -66,4 +66,21 @@ class User extends Authenticatable
 
         return $posts;
     }
+
+    public function notFollowing(Array $id, $limit = 100){
+        $actualUsers = Auth::user()->following()->pluck('id')->toArray();
+        if(!is_null($id)){
+            $actualUsers = $actualUsers + $id;
+        }
+        $actualUsers[count($actualUsers)] = Auth::user()->id;
+
+        return $this->whereNotIn('id', $actualUsers)->limit($limit)->get();
+    }
+
+    public function follow($id){
+        $this->following()->attach($id);
+    }
+    public function unfollow($id){
+        $this->following()->detach($id);
+    }
 }

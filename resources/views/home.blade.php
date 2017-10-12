@@ -12,6 +12,26 @@
                     <button class="btn btn-default pull-right" style="margin-top: 10px" id="post">Postar :)</button>
                 </div>
             </div>
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <div class="row">
+                        <div class="col-md-10">
+                            Que tal seguir esses?
+                        </div>
+                        <div class="col-md-2">
+                            <i class="material-icons" id="reloadUsersToFollow" style="cursor: pointer; color: grey" >autorenew</i>
+                        </div>
+                    </div>
+                </div>
+                <div class="panel-body">
+                    <div id="usersToFollow">
+
+                    </div>
+                    <div id="loadingUsersToFollow" style="height: 100px" class="cssload-container">
+                        <div class="cssload-whirlpool"></div>
+                    </div>
+                </div>
+            </div>
         </div>
         <div class="col-md-8">
             <div class="panel panel-default">

@@ -15,4 +15,6 @@ Auth::routes();
 
 Route::get('/', 'HomeController@index')->name('home');
 Route::get('/getPosts/{last?}/{direction?}', 'PostsController@getPosts')->name('getPosts');
+Route::post('/getUsersToFollow', 'HomeController@usersToFollow')->name('getUsersToFollow');
 Route::post('/sendPost', 'PostsController@create')->name('sendPosts');
+Route::post('/follow', 'UsersController@follow')->name('followUser');

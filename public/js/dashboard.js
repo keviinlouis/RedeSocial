@@ -1,14 +1,18 @@
 let emptyPost = false;
 let results = $('#posts');
-let fragmentFromString = function (strHTML) {
-    return document.createRange().createContextualFragment(strHTML);
-};
+let usersToFollow = $('#usersToFollow');
+let actualShowingUsers;
+
 $(document).ready(function(){
    $('#post').click(function(){
        sendPost();
    });
+   $('#reloadUsersToFollow').click(function(){
+       getUsersToFollow()
+   });
 
     getPosts('first');
+    getUsersToFollow();
 });
 
 $(window).scroll(function () {
@@ -104,4 +108,57 @@ function sendPost(){
     }else{
         error.fadeIn(300);
     }
+}
+
+function getUsersToFollow(){
+    let loading = $('#loadingUsersToFollow');
+    let reload = $('#reloadUsersToFollow');
+    $.ajax({
+        url: '/getUsersToFollow',
+        type: 'post',
+        data: {
+            _token: CSRFTOKEN,
+            actualShowingUsers: actualShowingUsers
+        },
+        beforeSend: function(){
+            usersToFollow.hide();
+            loading.fadeIn(300);
+            reload.addClass('activeReload');
+        },
+        success: function(data){
+            actualShowingUsers = data.actualShowingUsers;
+            usersToFollow.html(data.html);
+        },
+        complete: function(){
+            loading.hide();
+            usersToFollow.fadeIn(300);
+            reload.removeClass('activeReload');
+
+        },
+        error: function(data){
+            usersToFollow.html(data.responseJSON.message);
+        }
+
+    })
+}
+
+function onFollow(el){
+    el.fadeOut(300);
+    follow(el.attr('data-index'));
+    let ul = el.parent().parent().parent();
+    let li = el.parent().parent();
+    let icon = $(el.children()[0]);
+
+    setTimeout(function(){
+        icon.html('done').parent().fadeIn(300);
+    }, 500);
+    setTimeout(function(){
+        li.fadeOut(300);
+    }, 1000);
+    setTimeout(function(){
+        li.remove();
+        if(ul.children().length <= 0) {
+            getUsersToFollow();
+        }
+    }, 1500);
 }
