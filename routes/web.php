@@ -15,7 +15,13 @@ Auth::routes();
 
 Route::get('/', 'HomeController@index')->name('home');
 Route::get('/getPosts/{last?}/{direction?}', 'PostsController@getPosts')->name('getPosts');
+
 Route::post('/getUsersToFollow', 'HomeController@usersToFollow')->name('getUsersToFollow');
 Route::post('/sendPost', 'PostsController@create')->name('sendPost');
 Route::delete('/deletePost', 'PostsController@destroy')->name('deletePost');
 Route::post('/follow', 'UsersController@follow')->name('followUser');
+
+//API
+Route::get('/posts/{start}', 'PostsController@index')->name('getPosts');
+Route::resource('posts', 'PostsController');
+

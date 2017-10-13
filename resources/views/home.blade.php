@@ -7,12 +7,7 @@
             <div class="panel panel-default">
                 <div class="panel-heading"><h4>Postar</h4></div>
                 <div class="panel-body">
-                    {{Form::textarea('postText', null, ['id' => 'postText', 'class' => "form-control", "style" => "resize: none", "rows" => 3, "maxlength" => 140])}}
-                    <div class="alert alert-danger small " style="margin-top: 10px; display:none" id="errorSendPost">Insira algum texto antes de postar</div>
-                    <button class="btn btn-default pull-right" style="margin-top: 10px" id="buttonSendPost">Postar :)</button>
-                    <div id="loadingSendPost" style="height: 69px; margin-right: 31px;display: none" class="cssload-container pull-right">
-                        <div class="cssload-whirlpool"></div>
-                    </div>
+                    <post-new v-on:newpost="newPost"></post-new>
                 </div>
             </div>
             <div class="panel panel-default">
@@ -41,19 +36,10 @@
                 <div class="panel-heading"><h4>Dashboard</h4></div>
 
                 <div class="panel-body" >
-                    <div id="posts">
-
-                    </div>
-                    <div id="loading" style="height: 100px" class="cssload-container">
-                        <div class="cssload-whirlpool"></div>
-                    </div>
+                    <posts-list :posts="posts" :empty-posts="emptyPosts" :busy="busy" v-on:loadposts="loadPosts"></posts-list>
                 </div>
             </div>
         </div>
     </div>
 </div>
-@endsection
-
-@section('scripts')
-    <script src="{{ asset('js/dashboard.js') }}"></script>
 @endsection

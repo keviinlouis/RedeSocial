@@ -12,7 +12,7 @@
 
             <!-- Branding Image -->
             <a class="navbar-brand" href="{{ url('/') }}">
-                {{ config('app.name', 'Laravel') }}
+                {{ config('app.name', 'Laravel') }} @unless(Auth::guest())- {{Auth::user()->name}} @endunless
             </a>
         </div>
 
@@ -53,10 +53,6 @@
         </div>
     </div>
 </nav>
-<div class="alert alert-danger msg-master" id="error-master">
-
-</div>
-
-<div class="alert alert-success msg-master" id="success-master">
+<div class="alert msg-master" id="msg-nav">
 
 </div>

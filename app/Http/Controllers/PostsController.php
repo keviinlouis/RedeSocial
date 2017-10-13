@@ -2,48 +2,35 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\NewPost;
 use App\Models\Post;
 use Auth;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use LRedis;
 
 class PostsController extends Controller
 {
-    public function getPosts($last = null, $direction = null){
-        $first = 0;
-        if(!is_null($last)){
-            $last = Carbon::createFromFormat("Y-m-d H:i:s", base64_decode($last));
-            if($direction === 'first'){
-                $between = [$last->toDateTimeString(), Carbon::now()->toDateTimeString()];
-            }else{
-                $between = [$last->subHour(1)->toDateTimeString(), $last->addHour(1)->toDateTimeString()];
 
-            }
-        }else{
-            $first = 1;
-            $until = Carbon::now()->subHour(3);
-            $between = [$until->toDateTimeString(), Carbon::now()->toDateTimeString()];
-        }
+    public function index($start){
+        $posts = Auth::user()->followingPosts($start);
 
-        $posts = Auth::user()->followingPosts($between, $first);
-        $auth_id = Auth::user()->id;
-        Carbon::setLocale(config('app.locale'));
-        $view = view('posts', get_defined_vars())->render();
-
-        return response()->json(["html" => $view, "count" => count($posts)]);
+        return $posts;
     }
 
-    public function create(Request $request){
 
+    public function create(Request $request){
+        $user_id = Auth::user()->id;
         $request->validate($this->rules());
 
         $post = Post::create([
-            "user_id" => Auth::user()->id,
+            "user_id" => $user_id,
             "text" => $request["text"]
         ]);
         $posts = [$post];
-        $auth_id = Auth::user()->id;
-        $view = view('posts', get_defined_vars())->render();
+        $view = view('posts', ["posts" => $posts, "auth_id" => $user_id])->render();
+
+        //broadcast(new NewPost($post, Auth::user(), $view))->toOthers();
 
         return response()->json(["html" => $view, "count" => count($posts)]);
     }
