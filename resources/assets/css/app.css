@@ -1,0 +1,32 @@
+.msg-nav{
+    z-index:  9999999;
+    top: 0;
+    height: 50px;
+    width: 100%;
+    position: fixed;
+    display: none;
+}
+
+.active-rotate{
+    animation: cssload-rotate 500ms linear infinite;
+    -o-animation: cssload-rotate 500ms linear infinite;
+    -ms-animation: cssload-rotate 500ms linear infinite;
+    -webkit-animation: cssload-rotate 500ms linear infinite;
+    -moz-animation: cssload-rotate 500ms linear infinite;
+}
+
+.pointer{
+    cursor: pointer;
+}
+
+.icons-color-default{
+    color: grey
+}
+
+.word-break{
+ word-break:all;
+}
+
+
+
+

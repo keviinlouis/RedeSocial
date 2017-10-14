@@ -53,6 +53,6 @@
         </div>
     </div>
 </nav>
-<div class="alert msg-master" id="msg-nav">
+<div class="alert msg-nav" id="msg-nav">
 
 </div>

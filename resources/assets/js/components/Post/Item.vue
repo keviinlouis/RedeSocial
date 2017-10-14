@@ -5,18 +5,22 @@
                 <div class="col-md-11 col-xs-10">
                     <p style="word-break: break-all">{{post.user.name}}</p>
                 </div>
-                <div class="col-md-1 col-xs-1">
+
+                <div 
+                    class="col-md-1 col-xs-1" 
+                    v-show="userSession != null && post.id != null && post.user.id == userSession.id">
 
                     <div class="dropdown">
-                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
-                            <i class="material-icons " style="color: gray"> keyboard_arrow_down</i>
-                        </a>
+                        <div  class="dropdown-toggle pointer icons-color-default" data-toggle="dropdown" role="button" aria-expanded="false">
+                            <i class="material-icons">keyboard_arrow_down</i>
+                        </div>
 
                         <ul class="dropdown-menu dropdown-menu-right" role="menu">
-                            <li>
-                                <a href="#" class="removePost">
-                                    <i class="material-icons">delete</i> <span style="margin-top: 3px;margin-left: 3px;position: absolute;">Remover</span>
-                                </a>
+                            <li class="dropdown-item">
+                                <div class="pointer text-danger" @click="removePost">
+                                    <i class="material-icons">delete</i> 
+                                    <span style="margin-top: 3px;margin-left: 3px;position: absolute;">Remover</span>
+                                </div>
                             </li>
                         </ul>
                     </div>
@@ -30,7 +34,7 @@
                     <p style="word-break:break-all ">{{post.text}}</p>
                 </div>
                 <div class="col-md-3">
-
+                    {{post.created_at | moment("from", "now")}}
                 </div>
             </div>
         </div>
@@ -39,6 +43,14 @@
 
 <script>
     export default {
-        props: ['post']
+        
+        props: ['post', 'userSession'],
+
+        methods: {
+            removePost(){
+                event.preventDefault();
+                this.$emit('removepost', this.post)
+            }
+        }
     }
 </script>
