@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Auth;
 use Illuminate\Http\Request;
+
 use App\Models\User;
 
 class UsersController extends Controller
@@ -27,7 +28,7 @@ class UsersController extends Controller
      */
     public function show($id)
     {
-        $this->validator(['id' => $id], ["id" => "required|numeric|exists:users"]);
+        $this->validateRequest(['id' => $id], ["id" => "required|numeric|exists:users"]);
 
         $user = User::where("id", "=", $id)
             ->with('posts')
@@ -69,7 +70,7 @@ class UsersController extends Controller
      */
     public function follow($id)
     {
-        $this->validator(["id" => $id], ["id" => "required|numeric|exists:users"]);
+        $this->validateRequest(["id" => $id], ["id" => "required|numeric|exists:users"]);
         if (Auth::user()->id == $id) {
             return response()->json(["message" => ["id" => ["id selecionado é inválido."]]]);
         }

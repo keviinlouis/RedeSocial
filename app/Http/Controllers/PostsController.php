@@ -2,13 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Post;
-use App\Models\User;
 use Auth;
-use Carbon\Carbon;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Route;
 
+use App\Models\Post;
 
 class PostsController extends Controller
 {
@@ -20,7 +17,7 @@ class PostsController extends Controller
      */
     public function index($start = 0, $limit = 10)
     {
-        $this->validator(['start' => $start, 'limit' => $limit], ["start" => "numeric"]);
+        $this->validateRequest(['start' => $start, 'limit' => $limit], ["start" => "numeric"]);
 
         $posts = Auth::user()->followingPosts($start, $limit);
 
@@ -38,7 +35,7 @@ class PostsController extends Controller
      */
     public function show($id)
     {
-        $this->validator(['id' => $id], ["id" => "required|numeric|exists:posts"]);
+        $this->validateRequest(['id' => $id], ["id" => "required|numeric|exists:posts"]);
 
         $post = Post::where("id", "=", $id)->with('user')->first();
 
@@ -51,7 +48,7 @@ class PostsController extends Controller
      */
     public function storage(Request $request)
     {
-        $this->validator($request->toArray(), ["text" => "required|min:1|max:140"]);
+        $this->validateRequest($request->toArray(), ["text" => "required|min:1|max:140"]);
         $data = [
             "user_id" => Auth::user()->id,
             "text" => $request["text"]
@@ -73,7 +70,7 @@ class PostsController extends Controller
      */
     public function update($id, Request $request)
     {
-        $this->validator($request->toArray() + ["id" => $id], ["text" => "required|min:1|max:140", "id" => "required|numeric|exists:posts"]);
+        $this->validateRequest($request->toArray() + ["id" => $id], ["text" => "required|min:1|max:140", "id" => "required|numeric|exists:posts"]);
 
         $post = Post::where("id", "=", $id)->first();
 
@@ -89,7 +86,7 @@ class PostsController extends Controller
      */
     public function destroy(Request $request)
     {
-        $this->validator($request->toArray(), ["id" => "required|numeric|exists:posts"]);
+        $this->validateRequest($request->toArray(), ["id" => "required|numeric|exists:posts"]);
 
         $post = (new Post())->find($request["id"]);
         if (!$post->delete()) {
@@ -105,7 +102,7 @@ class PostsController extends Controller
      */
     public function like($id)
     {
-        $this->validator(["id" => $id], ["id" => "required|numeric|exists:posts"]);
+        $this->validateRequest(["id" => $id], ["id" => "required|numeric|exists:posts"]);
 
         $post = (new Post())->find($id);
 

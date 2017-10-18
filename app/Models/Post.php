@@ -5,6 +5,13 @@ namespace App\Models;
 use App\Scopes\CountPostsScope;
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * App\Models\Post
+ *
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\User[] $likes
+ * @property-read \App\Models\User $user
+ * @mixin \Eloquent
+ */
 class Post extends Model
 {
     protected $table = "posts";

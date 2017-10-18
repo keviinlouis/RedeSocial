@@ -16,7 +16,7 @@ class Controller extends BaseController
      * @param array $data
      * @param array $rules
      */
-    protected function validator(Array $data, Array $rules){
+    protected function validateRequest(Array $data, Array $rules){
         $validator = Validator::make($data, $rules);
         if($validator->fails()){
             response()->json(["messages" => $validator->messages()->toArray()], 400)->send();
