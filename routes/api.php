@@ -32,11 +32,12 @@ Route::group(['middleware' => 'jwt.auth'], function (){
     //Users
 
         //CRUD
-        Route::get('/user/{id}', 'UsersController@show')->name('showApiPost');
-        Route::post('/user', 'UsersController@storage')->name('createApiPost');
-        Route::put('/user/{id}', 'UsersController@update')->name('updateApiPost');
-        Route::delete('/user', 'UsersController@destroy')->name('deleteApiPost');
+        Route::get('/user/{id}', 'UsersController@show')->name('showApiUser');
+        Route::post('/user', 'UsersController@storage')->name('createApiUser');
+        Route::put('/user/{id}', 'UsersController@update')->name('updateApiUser');
+        Route::delete('/user', 'UsersController@destroy')->name('deleteApiUser');
 
-    Route::post('/suggestedUsers', 'UsersController@suggestedUsers')->name('suggestedUsers');
-    Route::post('/follow', 'UsersController@follow')->name('followUser');
+        //Adicionais
+        Route::post('/user/{id}/follow', 'UsersController@follow')->name('followApiUser');
+        Route::post('/users/suggested', 'UsersController@suggestedUsers')->name('suggestedApiUsers');
 });

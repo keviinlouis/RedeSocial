@@ -63,16 +63,18 @@ class UsersController extends Controller
         //
     }
 
-    public function follow(Request $request){
-        $this->validator($request->toArray(), [ "id" => "required|numeric|exists:posts"]);
-
-        if(!(new User())->find($request["id"])->followers()->toggle(Auth::user()->id)){
+    public function follow($id){
+        $this->validator(["id" => $id], [ "id" => "required|numeric|exists:users"]);
+        if(Auth::user()->id == $id){
+            return response()->json(["message" => ["id" => ["id selecionado é inválido."]]]);
+        }
+        if(!(new User())->find($id)->followers()->toggle(Auth::user()->id)){
             return response()->json(['message' => "Error Interno"], 500);
         }
         return response()->json([], 200);
     }
 
-    public function sugestedUsers(Request $request){
+    public function suggestedUsers(Request $request){
         $notFollowingUsers =  Auth::user()
             ->notFollowing(
                 $request->has('actualShowingUsers')?$request["actualShowingUsers"]:[],
