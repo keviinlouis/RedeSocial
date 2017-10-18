@@ -13,9 +13,9 @@ return [
     |
     */
 
-   // 'default' => env('DB_CONNECTION', 'mysql'),
+    'default' => env('DB_CONNECTION', 'pgsql'),
    // 'default' =>'sqlite',
-     'default' =>'pgsql',
+     //'default' =>'pgsql',
 
     /*
     |--------------------------------------------------------------------------
@@ -58,11 +58,11 @@ return [
 
         'pgsql' => [
             'driver' => 'pgsql',
-            'host' => 'ec2-23-21-220-32.compute-1.amazonaws.com',
-            'port' => '5432',
-            'database' => 'dc6dccq4vu5oop',
-            'username' =>  'waouvshzrnlfuu',
-            'password' => '86f6befb440c4346f2cfba1e8a1cc99579470e78234419e220ce3ae48f14eff2',
+            'host' => env('DB_HOST', ''),
+            'port' => env('DB_PORT', ''),
+            'database' => env('DB_DATABASE', ''),
+            'username' => env('DB_USERNAME', ''),
+            'password' => env('DB_PASSWORD', ''),
             'charset' => 'utf8',
             'prefix' => '',
             'schema' => 'public',

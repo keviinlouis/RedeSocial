@@ -5,8 +5,9 @@ namespace App\Models;
 use Auth;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Tymon\JWTAuth\Contracts\JWTSubject;
 
-class User extends Authenticatable
+class User extends Authenticatable implements JWTSubject
 {
     use Notifiable;
 
@@ -28,6 +29,16 @@ class User extends Authenticatable
         'password', 'remember_token',
     ];
 
+    public function getJWTIdentifier()
+    {
+        return $this->getKey();
+}
+
+    public function getJWTCustomClaims()
+    {
+        return [];
+    }
+
     public function posts(){
         return $this->hasMany('App\Models\Post', 'user_id');
     }
@@ -40,7 +51,7 @@ class User extends Authenticatable
         return $this->belongsToMany('App\Models\User', 'user_follows', 'following_id', 'followed_id');
     }
 
-    public function followingPosts($start){
+    public function followingPosts($start, $limit){
         $post = new Post();
 
         $ids =  $this->following()->pluck('id')->toArray();
@@ -51,7 +62,7 @@ class User extends Authenticatable
             ->orderBy('created_at', 'desc')
             ->with('user')
             ->skip($start)
-            ->take(10)
+            ->take($limit)
             ->get();
 
         return $posts;

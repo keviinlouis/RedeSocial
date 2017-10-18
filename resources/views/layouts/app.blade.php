@@ -13,23 +13,13 @@
     <!-- Styles -->
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
     <link href="{{ asset('css/all.css') }}" rel="stylesheet">
-    @yield("styles")
 </head>
 <body>
     <div id="app">
-        @include('layouts.nav')
-
-        @yield('content')
     </div>
 
-
-    <!--   Core JS Files   -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js" type="text/javascript"></script>
-
-    <!-- Scripts -->
+   <!-- Scripts -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.0.3/socket.io.js" ></script>
-
     <script src="{{ asset('js/app.js') }}"></script>
-    @yield("scripts")
 </body>
 </html>

@@ -2,54 +2,97 @@
 
 namespace App\Http\Controllers;
 
-use App\Events\NewPost;
 use App\Models\Post;
+use App\Models\User;
 use Auth;
-use Carbon\Carbon;
 use Illuminate\Http\Request;
-use LRedis;
+use Illuminate\Support\Facades\Route;
+use Validator;
+
 
 class PostsController extends Controller
 {
 
-    public function index($start){
-        $posts = Auth::user()->followingPosts($start);
+    /**
+     * @param int $start
+     * @param int $limit
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function index($start = 0, $limit = 10){
+        $this->validator(['start' => $start, 'limit' => $limit], [ "start" => "numeric"]);
 
-        return $posts;
+        $posts = Auth::user()->followingPosts($start, $limit);
+
+        $count = count($posts);
+        $nextPage = route('getApiPosts', ["start" => ($count >= 10 ? $start+10:null)]);
+        $prevPage = route('getApiPosts', ["start" => ($start - 10 > 0 ? $start - 10:null)]);
+
+        return response()->json(["_meta" => ["_prev" => $prevPage, "_next" => $nextPage, "lenght" => $count     ], "data" => $posts]);
+
     }
 
+    /**
+     * @param $id
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function view($id){
+        $this->validator(['id' => $id], [ "id" => "required|numeric|exists:posts"]);
+        $post = Post::where("id", "=", $id)->with('user')->first();
+
+        return response()->json([$post]);
+    }
+
+    /**
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function storage(Request $request){
-        $user_id = Auth::user()->id;
+        $this->validator($request->toArray(), [ "text" => "required|min:1|max:140"]);
 
-        $request->validate($this->rules());
-
-        $post = Post::create([
-            "user_id" => $user_id,
+        if(!$post = Post::create([
+            "user_id" => Auth::user()->id,
             "text" => $request["text"]
-        ]);
+        ])){
+            return response()->json(['message' => "Error Interno"], 500);
+        }
        
         //broadcast(new NewPost($post, Auth::user(), $view))->toOthers();
-        return response()->json(['post' => $post->where('id', '=', $post->id)->with('user')->first()], 201);
+        return response()->json([$post], 201);
     }
 
-    public function destroy(Request $request){
-        if($request->has("id")){
-            $post = (new Post())->find($request["id"]);
-            if(!is_null($post)){
-              $post->delete();
-            }else{
-               return response()->json(['msg' => "Not Found Post With this id"], 404);
-            }
-        }else{
-            return response()->json(['msg' => "Missing param id"], 400);
+    public function update($id, Request $request){
+        $this->validator($request->toArray() + ["id" => $id], [ "text" => "required|min:1|max:140", "id" => "required|numeric|exists:posts"]);
+
+        $post = Post::where("id", "=", $id)->first();
+
+        if(!$post->update($request->all())){
+            return response()->json(['message' => "Error Interno"], 500);
         }
+
     }
 
-    private function rules(){
-        $rules = [
-            "text" => "string|min:1|max:140|required"
-        ];
+    /**
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function destroy(Request $request){
+        $this->validator($request->toArray(), [ "id" => "required|numeric|exists:posts"]);
 
-        return $rules;
+        $post = (new Post())->find($request["id"]);
+        $post->delete();
+
+        return response()->json([$post], 200);
+    }
+
+    /**
+     * @param array $data
+     * @param array $rules
+     */
+    private function validator(Array $data, Array $rules){
+        $validator = Validator::make($data, $rules);
+        if($validator->fails()){
+           response()->json(["messages" => $validator->messages()->toArray()], 400)->send();
+           exit;
+        }
     }
 }
