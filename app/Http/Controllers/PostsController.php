@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Post;
 use App\Models\User;
 use Auth;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Validator;
@@ -37,6 +38,7 @@ class PostsController extends Controller
      */
     public function view($id){
         $this->validator(['id' => $id], [ "id" => "required|numeric|exists:posts"]);
+
         $post = Post::where("id", "=", $id)->with('user')->first();
 
         return response()->json([$post]);
@@ -48,11 +50,11 @@ class PostsController extends Controller
      */
     public function storage(Request $request){
         $this->validator($request->toArray(), [ "text" => "required|min:1|max:140"]);
-
-        if(!$post = Post::create([
+        $data = [
             "user_id" => Auth::user()->id,
             "text" => $request["text"]
-        ])){
+        ];
+        if(!$post = Post::create($data)){
             return response()->json(['message' => "Error Interno"], 500);
         }
        
@@ -60,6 +62,11 @@ class PostsController extends Controller
         return response()->json([$post], 201);
     }
 
+    /**
+     * @param $id
+     * @param Request $request
+     * @return \Illuminate\Contracts\Routing\ResponseFactory|\Illuminate\Http\JsonResponse|\Symfony\Component\HttpFoundation\Response
+     */
     public function update($id, Request $request){
         $this->validator($request->toArray() + ["id" => $id], [ "text" => "required|min:1|max:140", "id" => "required|numeric|exists:posts"]);
 
@@ -68,7 +75,7 @@ class PostsController extends Controller
         if(!$post->update($request->all())){
             return response()->json(['message' => "Error Interno"], 500);
         }
-
+        return response();
     }
 
     /**
@@ -79,9 +86,26 @@ class PostsController extends Controller
         $this->validator($request->toArray(), [ "id" => "required|numeric|exists:posts"]);
 
         $post = (new Post())->find($request["id"]);
-        $post->delete();
+        if(!$post->delete()){
+            return response()->json(['message' => "Error Interno"], 500);
+        }
 
         return response()->json([$post], 200);
+    }
+
+    /**
+     * @param $id
+     * @return \Illuminate\Contracts\Routing\ResponseFactory|\Illuminate\Http\JsonResponse|\Symfony\Component\HttpFoundation\Response
+     */
+    public function like($id){
+        $this->validator(["id" => $id], [ "id" => "required|numeric|exists:posts"]);
+
+        $post = (new Post())->find($id);
+
+        if(!$post->likes()->toggle(Auth::user()->id)){
+            return response()->json(['message' => "Error Interno"], 500);
+        }
+        return response(null, 200);
     }
 
     /**

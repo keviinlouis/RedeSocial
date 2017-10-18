@@ -14,13 +14,21 @@ use Illuminate\Support\Facades\Route;
 Route::post('/auth/login', 'AuthController@authenticate');
 
 Route::group(['middleware' => 'jwt.auth'], function (){
-    Route::get('/posts/{start?}/{limit?}', 'PostsController@index')->name('getApiPosts');
 
-    Route::get('/post/{id}', 'PostsController@view')->name('getApiPost');
-    Route::post('/posts', 'PostsController@storage')->name('createApiPost');
-    Route::put('/post/{id}', 'PostsController@update')->name('updateApiPost');
-    Route::delete('/posts', 'PostsController@destroy')->name('deleteApiPost');
+    //Posts
+        Route::get('/posts/{start?}/{limit?}', 'PostsController@index')->name('getApiPosts');
 
-    Route::post('/sugestedUsers', 'UsersController@sugestedUsers')->name('sugestedUsers');
+        //CRUD
+        Route::get('/post/{id}', 'PostsController@view')->name('getApiPost');
+        Route::post('/posts', 'PostsController@storage')->name('createApiPost');
+        Route::put('/post/{id}', 'PostsController@update')->name('updateApiPost');
+        Route::delete('/posts', 'PostsController@destroy')->name('deleteApiPost');
+
+        //Adicionais
+        Route::post('/post/{id}/like', 'PostsController@like')->name('likeApiPost');
+        Route::post('/post/{id}/repost', 'PostsController@repost')->name('repostApiPost'); //TODO
+        Route::post('/post/{id}/comment', 'PostsController@comment')->name('commentApiPost'); //TODO
+
+    Route::post('/suggestedUsers', 'UsersController@suggestedUsers')->name('suggestedUsers');
     Route::post('/follow', 'UsersController@follow')->name('followUser');
 });

@@ -61,6 +61,7 @@ class User extends Authenticatable implements JWTSubject
             ->whereIn('user_id', $ids)
             ->orderBy('created_at', 'desc')
             ->with('user')
+            ->withCount('likes')
             ->skip($start)
             ->take($limit)
             ->get();
