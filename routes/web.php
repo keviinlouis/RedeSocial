@@ -14,15 +14,3 @@
 Auth::routes();
 
 Route::get('/', 'HomeController@index')->name('home');
-
-Route::post('/getUsersToFollow', 'HomeController@usersToFollow')->name('getUsersToFollow');
-Route::post('/sendPost', 'PostsController@create')->name('sendPost');
-Route::delete('/deletePost', 'PostsController@destroy')->name('deletePost');
-
-
-//API
-Route::get('/user', function(){
-    return Auth::user();
-})->middleware('auth');
-
-
