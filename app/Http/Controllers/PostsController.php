@@ -57,8 +57,10 @@ class PostsController extends Controller
         if(!$post = Post::create($data)){
             return response()->json(['message' => "Error Interno"], 500);
         }
-       
+
+        //TODO Events
         //broadcast(new NewPost($post, Auth::user(), $view))->toOthers();
+
         return response()->json([$post], 201);
     }
 
@@ -75,7 +77,7 @@ class PostsController extends Controller
         if(!$post->update($request->all())){
             return response()->json(['message' => "Error Interno"], 500);
         }
-        return response();
+        return response()->json([$post], 200);
     }
 
     /**
@@ -95,7 +97,7 @@ class PostsController extends Controller
 
     /**
      * @param $id
-     * @return \Illuminate\Contracts\Routing\ResponseFactory|\Illuminate\Http\JsonResponse|\Symfony\Component\HttpFoundation\Response
+     * @return \Illuminate\Http\JsonResponse
      */
     public function like($id){
         $this->validator(["id" => $id], [ "id" => "required|numeric|exists:posts"]);
@@ -105,7 +107,15 @@ class PostsController extends Controller
         if(!$post->likes()->toggle(Auth::user()->id)){
             return response()->json(['message' => "Error Interno"], 500);
         }
-        return response(null, 200);
+        return response()->json([], 200);
+    }
+
+    public function comment($id, Request $request){
+        //TODO
+    }
+
+    public function repost($id){
+        //TODO
     }
 
     /**
