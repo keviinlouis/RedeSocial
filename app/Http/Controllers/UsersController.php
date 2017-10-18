@@ -15,7 +15,7 @@ class UsersController extends Controller
      */
     public function index()
     {
-        //
+
     }
 
 
@@ -27,7 +27,16 @@ class UsersController extends Controller
      */
     public function show($id)
     {
-        //
+        $this->validator(['id' => $id], [ "id" => "required|numeric|exists:users"]);
+
+        $user = User::where("id", "=", $id)
+            ->with('posts')
+            ->with('likes')
+            ->with('followers')
+            ->with('following')
+            ->first();
+
+        return response()->json([$user]);
     }
 
 
@@ -55,16 +64,12 @@ class UsersController extends Controller
     }
 
     public function follow(Request $request){
-        if($request->has("id")){
-            $user = (new User())->find($request["id"]);
-            if(!is_null($user)){
-                $user->followers()->attach(Auth::user()->id);
-            }else{
-               return response()->json(['msg' => "Not Found Post With this id"], 404);
-            }
-        }else{
-            return response()->json(['msg' => "Missing param id"], 400);
+        $this->validator($request->toArray(), [ "id" => "required|numeric|exists:posts"]);
+
+        if(!(new User())->find($request["id"])->followers()->toggle(Auth::user()->id)){
+            return response()->json(['message' => "Error Interno"], 500);
         }
+        return response()->json([], 200);
     }
 
     public function sugestedUsers(Request $request){
@@ -76,4 +81,6 @@ class UsersController extends Controller
         
         return response()->json(['sugestedUsers' => $notFollowingUsers]);
     }
+
+
 }

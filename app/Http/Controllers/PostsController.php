@@ -8,7 +8,7 @@ use Auth;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use Validator;
+
 
 
 class PostsController extends Controller
@@ -25,8 +25,8 @@ class PostsController extends Controller
         $posts = Auth::user()->followingPosts($start, $limit);
 
         $count = count($posts);
-        $nextPage = route('getApiPosts', ["start" => ($count >= 10 ? $start+10:null)]);
-        $prevPage = route('getApiPosts', ["start" => ($start - 10 > 0 ? $start - 10:null)]);
+        $nextPage = route('listApiPosts', ["start" => ($count >= 10 ? $start+10:null)]);
+        $prevPage = route('listApiPosts', ["start" => ($start - 10 > 0 ? $start - 10:null)]);
 
         return response()->json(["_meta" => ["_prev" => $prevPage, "_next" => $nextPage, "lenght" => $count     ], "data" => $posts]);
 
@@ -36,7 +36,7 @@ class PostsController extends Controller
      * @param $id
      * @return \Illuminate\Http\JsonResponse
      */
-    public function view($id){
+    public function show($id){
         $this->validator(['id' => $id], [ "id" => "required|numeric|exists:posts"]);
 
         $post = Post::where("id", "=", $id)->with('user')->first();
@@ -116,17 +116,5 @@ class PostsController extends Controller
 
     public function repost($id){
         //TODO
-    }
-
-    /**
-     * @param array $data
-     * @param array $rules
-     */
-    private function validator(Array $data, Array $rules){
-        $validator = Validator::make($data, $rules);
-        if($validator->fails()){
-           response()->json(["messages" => $validator->messages()->toArray()], 400)->send();
-           exit;
-        }
     }
 }

@@ -43,12 +43,16 @@ class User extends Authenticatable implements JWTSubject
         return $this->hasMany('App\Models\Post', 'user_id');
     }
 
+    public function likes(){
+        return $this->belongsToMany('App\Models\Post', 'post_likes', 'user_id', 'post_id')->withTimestamps();
+    }
+
     public function followers(){
-        return $this->belongsToMany('App\Models\User', 'user_follows', 'followed_id','following_id');
+        return $this->belongsToMany('App\Models\User', 'user_follows', 'followed_id','following_id')->withTimestamps();
     }
 
     public function following(){
-        return $this->belongsToMany('App\Models\User', 'user_follows', 'following_id', 'followed_id');
+        return $this->belongsToMany('App\Models\User', 'user_follows', 'following_id', 'followed_id')->withTimestamps();
     }
 
     public function followingPosts($start, $limit){
@@ -79,10 +83,4 @@ class User extends Authenticatable implements JWTSubject
         return $this->whereNotIn('id', $actualUsers)->limit($limit)->get();
     }
 
-    public function follow($id){
-        $this->following()->attach($id);
-    }
-    public function unfollow($id){
-        $this->following()->detach($id);
-    }
 }
