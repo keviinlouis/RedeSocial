@@ -19,17 +19,17 @@ class UsersTableSeeder extends Seeder
         \DB::table('users')->insert(array (
             0 => 
             array (
-                'id' => 1,
+                'id' => '1',
                 'name' => 'Kevin Santos',
                 'email' => 'keviinlouis@hotmail.com',
                 'password' => '$2y$10$aFOjnymcKCyBxw4EoiJnx.h1ju2Sn/ADolxjXIKsTH.hwEKqteSJS',
-                'remember_token' => 'lCzkAkRo9SLahEyercgsB8lOjaeqUrGldvDQ7gxkGxYG25afXoKsY67YYxHT',
+                'remember_token' => 'TKuPi8eMgjQtxkD1pVmdtFPKjGSltoXall8viqxqU7xkFfZehsHTsC0eWAGU',
                 'created_at' => '2017-10-10 17:20:14',
                 'updated_at' => '2017-10-10 17:20:14',
             ),
             1 => 
             array (
-                'id' => 2,
+                'id' => '2',
                 'name' => 'Wendell Neander',
                 'email' => 'www@neander.com',
                 'password' => '$2y$10$aFOjnymcKCyBxw4EoiJnx.h1ju2Sn/ADolxjXIKsTH.hwEKqteSJS',
@@ -39,7 +39,7 @@ class UsersTableSeeder extends Seeder
             ),
             2 => 
             array (
-                'id' => 3,
+                'id' => '3',
                 'name' => 'Ronaldo Bianch',
                 'email' => 'ronaldo@bianchi.com',
                 'password' => '$2y$10$aFOjnymcKCyBxw4EoiJnx.h1ju2Sn/ADolxjXIKsTH.hwEKqteSJS',
