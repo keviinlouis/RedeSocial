@@ -72,7 +72,7 @@ class UsersController extends Controller
     {
         $this->validateRequest(["id" => $id], ["id" => "required|numeric|exists:users"]);
         if (Auth::user()->id == $id) {
-            return response()->json(["message" => ["id" => ["id selecionado é inválido."]]]);
+            return response()->json(["message" => ["id" => ["id selecionado é inválido."]]], 400);
         }
         if (!(new User())->find($id)->followers()->toggle(Auth::user()->id)) {
             return response()->json(['message' => "Error Interno"], 500);
@@ -80,16 +80,39 @@ class UsersController extends Controller
         return response()->json([], 200);
     }
 
+    /**
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function suggested(Request $request)
     {
+        $actualShowingUsers = [];
+        if($request->has('actualShowingUsers')) {
+            if (is_array($request["actualShowingUsers"])){
+                foreach ($request["actualShowingUsers"] as $key => $id){
+                    $id = intval($id);
+                    if($id>0){
+                        $actualShowingUsers[] = $id;
+                    }else{
+                        return response()->json(["message" => ["actualShowingUsers" => ["id {".$request['actualShowingUsers'][$key]."} selecionado é inválido.", $request['actualShowingUsers'][$key]]]], 400);
+                    }
+                }
+                $actualShowingUsers = $request["actualShowingUsers"];
+            }else if(intval($request["actualShowingUsers"])>0){
+                $actualShowingUsers = [intval($request["actualShowingUsers"])];
+            }else{
+                return response()->json(["message" => ["actualShowingUsers" => ["id selecionado é inválido."]]], 400);
+            }
+        }
         $notFollowingUsers = Auth::user()
             ->notFollowing(
-                $request->has('actualShowingUsers') ? $request["actualShowingUsers"] : [],
+                $actualShowingUsers,
                 $request->has('limit') ? $request["limit"] : 5
             );
 
-        return response()->json(['suggestedUsers' => $notFollowingUsers]);
+        return response()->json(['suggestedUsers' => $notFollowingUsers, 'length' => count($notFollowingUsers), 'pastSuggestedUsers' => $request["actualShowingUsers"]]);
     }
+
 
 
 }

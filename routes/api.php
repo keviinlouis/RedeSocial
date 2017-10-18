@@ -40,4 +40,6 @@ Route::group(['middleware' => 'jwt.auth'], function (){
         //Adicionais
         Route::post('/user/{id}/follow', 'UsersController@follow')->name('followApiUser');
         Route::post('/users/suggested', 'UsersController@suggested')->name('suggestedApiUsers');
+        Route::get('/user/{id}/following', 'UsersController@following')->name('followingApiUsers');
+
 });
