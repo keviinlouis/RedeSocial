@@ -88,7 +88,7 @@ class UsersController extends Controller
                 $request->has('limit') ? $request["limit"] : 5
             );
 
-        return response()->json(['sugestedUsers' => $notFollowingUsers]);
+        return response()->json(['suggestedUsers' => $notFollowingUsers]);
     }
 
 
