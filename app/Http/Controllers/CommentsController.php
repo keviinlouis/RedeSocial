@@ -20,7 +20,7 @@ class CommentsController extends Controller
     {
         $this->validateRequest(
             ['id' => $id],
-            ["id" => "required|numeric|exists:comments"]
+            ["id" => "required||exists:comments"]
         );
 
         $comment = Comment::with(['user', 'post', 'post.user'])->find($id);
@@ -52,7 +52,7 @@ class CommentsController extends Controller
             $request->toArray() + ["id" => $id],
                 [
                     "text" => "required|min:1|max:140",
-                    "id" => "required|numeric|exists:comments"
+                    "id" => "required||exists:comments"
                 ]
         );
 
@@ -72,7 +72,7 @@ class CommentsController extends Controller
         $this->validateRequest(
             ["id" => $id],
             [
-                "id" => "required|numeric|exists:comments"
+                "id" => "required||exists:comments"
             ]);
 
         $comment = Auth::user()->comments()->with(['user', 'post', 'post.user'])->find($id);
