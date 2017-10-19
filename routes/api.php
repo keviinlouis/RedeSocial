@@ -22,12 +22,19 @@ Route::group(['middleware' => 'jwt.auth'], function (){
         Route::get('/post/{id}', 'PostsController@show')->name('showApiPost');
         Route::post('/post', 'PostsController@storage')->name('createApiPost');
         Route::put('/post/{id}', 'PostsController@update')->name('updateApiPost');
-        Route::delete('/post', 'PostsController@destroy')->name('deleteApiPost');
+        Route::delete('/post/{id}', 'PostsController@destroy')->name('deleteApiPost');
 
         //Adicionais
         Route::post('/post/{id}/like', 'PostsController@like')->name('likeApiPost');
         Route::post('/post/{id}/repost', 'PostsController@repost')->name('repostApiPost'); //TODO
-        Route::post('/post/{id}/comment', 'PostsController@comment')->name('commentApiPost'); //TODO
+        Route::get('/post/{id}/comments', 'PostsController@comments')->name('listCommentsApiPost');
+
+        //Comentarios
+        Route::get('/comments', 'CommentsController@index')->name('listApiComments');
+        Route::get('/comment/{id}', 'CommentsController@show')->name('showCommentsApiPost');
+        Route::post('/post/{id}/comment', 'CommentsController@storage')->name('createCommentApiPost');
+        Route::put('/comment/{comment}', 'CommentsController@update')->name('updateCommentApiPost');
+        Route::delete('/comment/{comment}', 'CommentsController@destroy')->name('deleteCommentApiPost');
 
     //Users
 
@@ -39,7 +46,7 @@ Route::group(['middleware' => 'jwt.auth'], function (){
 
         //Adicionais
         Route::post('/user/{id}/follow', 'UsersController@follow')->name('followApiUser');
-        Route::post('/users/suggested', 'UsersController@suggested')->name('suggestedApiUsers');
+        Route::post('/users/suggested/{limit?}', 'UsersController@suggested')->name('suggestedApiUsers');
         Route::get('/user/{id}/following', 'UsersController@following')->name('followingApiUsers');
 
 });

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Auth;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 
 use App\Models\Post;
 
@@ -22,10 +23,10 @@ class PostsController extends Controller
         $posts = Auth::user()->followingPosts($start, $limit);
 
         $count = count($posts);
-        $nextPage = route('listApiPosts', ["start" => ($count >= 10 ? $start + 10 : null)]);
-        $prevPage = route('listApiPosts', ["start" => ($start - 10 > 0 ? $start - 10 : null)]);
+        $nextPage = $count >= $limit ? route('listApiPosts', ["start" =>  $start + $limit, "limit" => $limit ]) : null;
+        $prevPage = $start - $limit >= 0 ? route('listApiPosts', ["start" =>  $start - $limit, "limit" => $limit ]) : null;
 
-        return response()->json(["_meta" => ["_prev" => $prevPage, "_next" => $nextPage, "lenght" => $count], "data" => $posts]);
+        return response()->json(["_meta" => ["_prev" => $prevPage, "_next" => $nextPage, "lenght" => $count], "posts" => $posts]);
 
     }
 
@@ -37,9 +38,9 @@ class PostsController extends Controller
     {
         $this->validateRequest(['id' => $id], ["id" => "required|numeric|exists:posts"]);
 
-        $post = Post::where("id", "=", $id)->with('user')->first();
+        $post = Post::with(['user', 'comments', 'likes'])->withCount(['likes', 'comments'])->find($id);
 
-        return response()->json([$post]);
+        return response()->json($post);
     }
 
     /**
@@ -49,18 +50,19 @@ class PostsController extends Controller
     public function storage(Request $request)
     {
         $this->validateRequest($request->toArray(), ["text" => "required|min:1|max:140"]);
+
         $data = [
-            "user_id" => Auth::user()->id,
             "text" => $request["text"]
         ];
-        if (!$post = Post::create($data)) {
-            return response()->json(['message' => "Error Interno"], 500);
+
+        if (!$post = Auth::user()->posts()->create($data)) {
+            return response()->json(['message' => "Error Interno"], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
 
         //TODO Events
         //broadcast(new NewPost($post, Auth::user(), $view))->toOthers();
 
-        return response()->json([$post], 201);
+        return response()->json(Post::with(['user'])->find($post->id), Response::HTTP_CREATED);
     }
 
     /**
@@ -72,28 +74,33 @@ class PostsController extends Controller
     {
         $this->validateRequest($request->toArray() + ["id" => $id], ["text" => "required|min:1|max:140", "id" => "required|numeric|exists:posts"]);
 
-        $post = Post::where("id", "=", $id)->first();
+        $post = Auth::user()->posts()->with(['comments', 'likes', 'user'])->find($id);
 
-        if (!$post->update($request->all())) {
-            return response()->json(['message' => "Error Interno"], 500);
+        if(is_null($post)){
+            return response()->json(['message' => ["id" => ["Alteração não autorizada"]]], Response::HTTP_UNAUTHORIZED);
+        }else if (!$post->update($request->all())) {
+            return response()->json(['message' => "Error Interno"], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
-        return response()->json([$post], 200);
+        return response()->json($post);
     }
 
     /**
-     * @param Request $request
+     * @param $id
      * @return \Illuminate\Http\JsonResponse
      */
-    public function destroy(Request $request)
+    public function destroy($id)
     {
-        $this->validateRequest($request->toArray(), ["id" => "required|numeric|exists:posts"]);
+        $this->validateRequest(["id" => $id], ["id" => "required|numeric|exists:posts"]);
 
-        $post = (new Post())->find($request["id"]);
-        if (!$post->delete()) {
-            return response()->json(['message' => "Error Interno"], 500);
+        $post = Auth::user()->posts()->with(['comments', 'likes', 'user'])->find($id);
+
+        if(is_null($post)){
+            return response()->json(['message' => ["id" => ["Alteração não autorizada"]]], Response::HTTP_UNAUTHORIZED);
+        }else if (!$post->delete()) {
+            return response()->json(['message' => "Error Interno"], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
 
-        return response()->json([$post], 200);
+        return response()->json($post);
     }
 
     /**
@@ -103,22 +110,35 @@ class PostsController extends Controller
     public function like($id)
     {
         $this->validateRequest(["id" => $id], ["id" => "required|numeric|exists:posts"]);
+        $post = Post::with('likes')->find($id);
 
-        $post = (new Post())->find($id);
-
-        if (!$post->likes()->toggle(Auth::user()->id)) {
-            return response()->json(['message' => "Error Interno"], 500);
+        if (!$action = $post->likes()->toggle(Auth::user()->id)) {
+            return response()->json(['message' => "Error Interno"], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
-        return response()->json([], 200);
+        if(count($action["attached"])>0){
+            $action = "liked";
+        }else{
+            $action = "unliked";
+        }
+        return response()->json(['action' => $action, "post" => $post]);
     }
 
-    public function comment($id, Request $request)
-    {
-        //TODO
-    }
 
     public function repost($id)
     {
         //TODO
+    }
+
+    /**
+     * @param $id
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function comments($id){
+        $this->validateRequest(['id' => $id], ["id" => "required|numeric|exists:posts"]);
+
+        $post = Post::with('user')->withCount('comments')->find($id);
+        $comments = $post->comments()->with(['user'])->get();
+
+        return response()->json(["post" => $post, "comments" => $comments]);
     }
 }

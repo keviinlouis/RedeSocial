@@ -16,6 +16,8 @@ class Post extends Model
 {
     protected $table = "posts";
 
+    protected $primaryKey = "id";
+
     protected $fillable = [
         "text", "user_id"
     ];
@@ -26,5 +28,9 @@ class Post extends Model
 
     public function likes(){
         return $this->belongsToMany('App\Models\User', 'post_likes', 'post_id')->withTimestamps();
+    }
+
+    public function comments(){
+        return $this->hasMany('App\Models\Comment', 'post_id');
     }
 }

@@ -53,6 +53,10 @@ class User extends Authenticatable implements JWTSubject
         return $this->hasMany('App\Models\Post', 'user_id');
     }
 
+    public function comments(){
+        return $this->hasMany('App\Models\Comment', 'user_id');
+    }
+
     public function likes(){
         return $this->belongsToMany('App\Models\Post', 'post_likes', 'user_id', 'post_id')->withTimestamps();
     }
@@ -66,16 +70,12 @@ class User extends Authenticatable implements JWTSubject
     }
 
     public function followingPosts($start, $limit){
-        $post = new Post();
+        $ids = $this->following()->pluck('id')->toArray() + [Auth::user()->id];
 
-        $ids =  $this->following()->pluck('id')->toArray();
-        $ids[count($ids)] = Auth::user()->id;
-
-        $posts = $post
-            ->whereIn('user_id', $ids)
+        $posts = Post::whereIn('user_id', $ids)
             ->orderBy('created_at', 'desc')
-            ->with('user')
-            ->withCount('likes')
+            ->with(['user', 'comments'])
+            ->withCount(['likes', 'comments'])
             ->skip($start)
             ->take($limit)
             ->get();

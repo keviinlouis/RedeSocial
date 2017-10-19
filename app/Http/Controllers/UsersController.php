@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use Auth;
 use Illuminate\Http\Request;
-
+use Illuminate\Http\Response;
 use App\Models\User;
 
 class UsersController extends Controller
@@ -30,14 +30,11 @@ class UsersController extends Controller
     {
         $this->validateRequest(['id' => $id], ["id" => "required|numeric|exists:users"]);
 
-        $user = User::where("id", "=", $id)
-            ->with('posts')
-            ->with('likes')
-            ->with('followers')
-            ->with('following')
-            ->first();
+        $user = User::with(['posts', 'likes', 'comments', 'followers', 'following'])
+            ->withCount(['posts', 'likes', 'comments', 'followers', 'following'])
+            ->find($id);
 
-        return response()->json([$user]);
+        return response()->json($user);
     }
 
 
@@ -72,20 +69,28 @@ class UsersController extends Controller
     {
         $this->validateRequest(["id" => $id], ["id" => "required|numeric|exists:users"]);
         if (Auth::user()->id == $id) {
-            return response()->json(["message" => ["id" => ["id selecionado é inválido."]]], 400);
+            return response()->json(["message" => ["id" => ["id selecionado é inválido."]]], Response::HTTP_BAD_REQUEST);
         }
-        if (!(new User())->find($id)->followers()->toggle(Auth::user()->id)) {
-            return response()->json(['message' => "Error Interno"], 500);
+        if (!$action = Auth::user()->following()->toggle($id)){
+            return response()->json(['message' => "Error Interno"], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
-        return response()->json([], 200);
+        if(count($action["attached"])>0){
+            $action = "followed";
+        }else{
+            $action = "unfollowed";
+        }
+        return response()->json(["action" => $action]);
     }
 
     /**
+     * @param int $limit
      * @param Request $request
      * @return \Illuminate\Http\JsonResponse
      */
-    public function suggested(Request $request)
+    public function suggested($limit = 5, Request $request)
     {
+        $this->validateRequest(["limit" => $limit], ["limit" => "numeric"]);
+
         $actualShowingUsers = [];
         if($request->has('actualShowingUsers')) {
             if (is_array($request["actualShowingUsers"])){
@@ -94,23 +99,24 @@ class UsersController extends Controller
                     if($id>0){
                         $actualShowingUsers[] = $id;
                     }else{
-                        return response()->json(["message" => ["actualShowingUsers" => ["id {".$request['actualShowingUsers'][$key]."} selecionado é inválido.", $request['actualShowingUsers'][$key]]]], 400);
+                        return response()->json(["message" => ["actualShowingUsers" => ["id {".$request['actualShowingUsers'][$key]."} selecionado é inválido.", $request['actualShowingUsers'][$key]]]], Response::HTTP_BAD_REQUEST);
                     }
                 }
                 $actualShowingUsers = $request["actualShowingUsers"];
             }else if(intval($request["actualShowingUsers"])>0){
                 $actualShowingUsers = [intval($request["actualShowingUsers"])];
             }else{
-                return response()->json(["message" => ["actualShowingUsers" => ["id selecionado é inválido."]]], 400);
+                return response()->json(["message" => ["actualShowingUsers" => ["id selecionado é inválido."]]], Response::HTTP_BAD_REQUEST);
             }
         }
-        $notFollowingUsers = Auth::user()
-            ->notFollowing(
-                $actualShowingUsers,
-                $request->has('limit') ? $request["limit"] : 5
-            );
 
-        return response()->json(['suggestedUsers' => $notFollowingUsers, 'length' => count($notFollowingUsers), 'pastSuggestedUsers' => $request["actualShowingUsers"]]);
+        $notFollowingUsers = Auth::user()->notFollowing($actualShowingUsers,$limit );
+
+        return response()->json([
+            'suggestedUsers' => $notFollowingUsers,
+            'length' => count($notFollowingUsers),
+            'pastSuggestedUsers' => $request["actualShowingUsers"],
+        ]);
     }
 
 
