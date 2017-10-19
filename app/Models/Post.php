@@ -26,6 +26,18 @@ class Post extends Model
         return $this->belongsTo('App\Models\User', 'user_id');
     }
 
+    public function reposts(){
+        return $this->belongsToMany('App\Models\User', 'reposts', 'post_id', 'user_id')->withTimestamps();
+    }
+    public function respotable()
+    {
+        return $this->morphTo();
+    }
+
+    public function participants()
+    {
+        return $this->morphMany(Participant::class, 'participatable');
+    }
     public function likes(){
         return $this->belongsToMany('App\Models\User', 'post_likes', 'post_id')->withTimestamps();
     }

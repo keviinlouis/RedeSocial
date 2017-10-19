@@ -53,6 +53,23 @@ class User extends Authenticatable implements JWTSubject
         return $this->hasMany('App\Models\Post', 'user_id');
     }
 
+    public function reposts(){
+        return $this->belongsToMany('App\Models\Post', 'reposts', 'user_id', 'post_id')->withTimestamps()->orderBy('created_at', 'desc');
+    }
+    public function allPosts()
+    {
+        return $this->morphToMany('App\Models\AllPosts', 'all');
+    }
+
+    public function getAll(){
+
+        $posts = $this->posts()->with('user')->get();
+        $reposts = $this->reposts()->with('user')->get();
+        $all = new AllPosts();
+        dd($this->allPosts());
+        return $posts->merge($reposts);
+    }
+
     public function comments(){
         return $this->hasMany('App\Models\Comment', 'user_id');
     }

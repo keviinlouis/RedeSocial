@@ -29,6 +29,7 @@ Route::group(['middleware' => 'jwt.auth'], function (){
         Route::post('/post/{id}/repost', 'PostsController@repost')->name('repostApiPost'); //TODO
         Route::get('/post/{id}/comments', 'PostsController@comments')->name('listCommentsApiPost');
 
+
         //Comentarios
         Route::get('/comments', 'CommentsController@index')->name('listApiComments');
         Route::get('/comment/{id}', 'CommentsController@show')->name('showCommentsApiPost');

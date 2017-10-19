@@ -126,7 +126,18 @@ class PostsController extends Controller
 
     public function repost($id)
     {
-        //TODO
+        $this->validateRequest(["id" => $id], ["id" => "required|numeric|exists:posts"]);
+        $post = Post::with(['likes', 'user'])->find($id);
+
+        if (!$action = $post->reposts()->toggle(Auth::user()->id)) {
+            return response()->json(['message' => "Error Interno"], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+        if(count($action["attached"])>0){
+            $action = "reposted";
+        }else{
+            $action = "unresposted";
+        }
+        return response()->json(['action' => $action, "post" => $post]);
     }
 
     /**

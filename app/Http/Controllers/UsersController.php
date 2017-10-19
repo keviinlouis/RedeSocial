@@ -30,11 +30,12 @@ class UsersController extends Controller
     {
         $this->validateRequest(['id' => $id], ["id" => "required|numeric|exists:users"]);
 
-        $user = User::with(['posts', 'likes', 'comments', 'followers', 'following'])
-            ->withCount(['posts', 'likes', 'comments', 'followers', 'following'])
+        $user = User::with(['posts', 'likes', 'comments', 'followers', 'following', 'reposts'])
+            ->withCount(['posts', 'likes', 'comments', 'followers', 'following', 'reposts'])
             ->find($id);
 
-        return response()->json($user);
+
+        return response()->json($user->getAll());
     }
 
 
