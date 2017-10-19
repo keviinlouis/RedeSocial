@@ -1,12 +1,12 @@
 # RedeSocial
 Rede Social Twitter em Laravel
 
-####Prerequites
+#### Prerequites
 ````
   PHP >= 7.1
   Laravel >= 5.5.*
 ````
-####To Run
+#### To Run
 ````
   composer update
   php artisan migrate --seed
