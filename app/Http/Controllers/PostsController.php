@@ -38,7 +38,7 @@ class PostsController extends Controller
     {
         $this->validateRequest(['id' => $id], ["id" => "required|numeric|exists:posts"]);
 
-        $post = Post::with(['user', 'comments', 'likes'])->withCount(['likes', 'comments'])->find($id);
+        $post = Post::with(['user', 'comments', 'comments.user', 'likes'])->withCount(['likes', 'comments'])->find($id);
 
         return response()->json($post);
     }

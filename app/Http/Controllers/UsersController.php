@@ -28,6 +28,7 @@ class UsersController extends Controller
      */
     public function show($id)
     {
+
         $this->validateRequest(['id' => $id], ["id" => "required|numeric|exists:users"]);
 
         $user = User::with(['posts', 'likes', 'comments', 'followers', 'following', 'reposts'])

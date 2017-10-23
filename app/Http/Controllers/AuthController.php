@@ -30,7 +30,7 @@ class AuthController extends Controller
     public function register(Request $request)
     {
         // grab credentials from the request
-        $credentials = $request->only(['email', 'password', 'name'];
+        $credentials = $request->only(['email', 'password', 'name']);
             
         $this->validateRequest($credentials, [
             'name' => 'required|string|max:255',

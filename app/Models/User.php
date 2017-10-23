@@ -54,20 +54,60 @@ class User extends Authenticatable implements JWTSubject
     }
 
     public function reposts(){
-        return $this->belongsToMany('App\Models\Post', 'reposts', 'user_id', 'post_id')->withTimestamps()->orderBy('created_at', 'desc');
-    }
-    public function allPosts()
-    {
-        return $this->morphToMany('App\Models\AllPosts', 'all');
+        return $this->belongsToMany('App\Models\Post', 'reposts', 'user_id', 'post_id')->withTimestamps();
     }
 
     public function getAll(){
 
-        $posts = $this->posts()->with('user')->get();
-        $reposts = $this->reposts()->with('user')->get();
-        $all = new AllPosts();
-        dd($this->allPosts());
-        return $posts->merge($reposts);
+        $posts = $this->posts()->with('user')->orderByDesc('created_at')->get();
+
+        $reposts = $this->reposts()->with(['user'])->orderByDesc('pivot_created_at')->get();
+
+
+
+        foreach($reposts as $repost){
+            $meio = intval(ceil(count($posts)/2))-1;
+            $find = false;
+            $post = $posts[$meio];
+            $created = $post->created_at;
+
+            if(isset($post->pivot)){
+                $created = $post->pivot->created_at;
+            }
+            if($created->gt($repost->pivot->created_at)){
+
+                for($i = $meio+1; $i < count($posts); $i++){
+                    $post = $posts[$i];
+                    $created = $post->created_at;
+                    if(isset($post->pivot)){
+                        $created = $post->pivot->created_at;
+                    }
+                    if($created->lt($repost->pivot->created_at)){
+                        $posts->splice($i, 0, $repost);
+                        $find = true;
+                    }
+                }
+                if(!$find) {
+                    $posts->push($repost);
+                }
+            }else if($created->lt($repost->pivot->created_at)){
+                for($i = $meio-1; $i >= 0; $i--){
+                    $post = $posts[$i];
+                    $created = $post->created_at;
+                    if(isset($post->pivot->created_at)){
+                        $created = $post->pivot->created_at;
+                    }
+                    if($created->gt($repost->pivot->created_at)){
+                        $posts->splice($i+1, 0, [$repost]);
+                        $find = true;
+                    }
+                }
+                if(!$find) {
+                    $posts->prepend($repost);
+                }
+            }
+        }
+        return $posts;
     }
 
     public function comments(){
