@@ -39,6 +39,7 @@ Route::group(['middleware' => 'jwt.auth'], function (){
         Route::delete('/comment/{comment}', 'CommentsController@destroy')->name('deleteCommentApiPost');
 
     //Users
+        Route::get('/users/{start?}/{limit?}', 'UsersController@index')->name('listApiUsers');
 
         //CRUD
         Route::get('/user/{id}', 'UsersController@show')->name('showApiUser');

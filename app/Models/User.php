@@ -57,13 +57,11 @@ class User extends Authenticatable implements JWTSubject
         return $this->belongsToMany('App\Models\Post', 'reposts', 'user_id', 'post_id')->withTimestamps();
     }
 
-    public function getAll(){
+    public function getPosts(){
 
         $posts = $this->posts()->with('user')->orderByDesc('created_at')->get();
 
-        $reposts = $this->reposts()->with(['user'])->orderByDesc('pivot_created_at')->get();
-
-
+        $reposts = $this->reposts()->with(['user'])->get();
 
         foreach($reposts as $repost){
             $meio = intval(ceil(count($posts)/2))-1;

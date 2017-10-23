@@ -14,9 +14,9 @@ class UsersController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index($start = 0, $limit = 10)
     {
-
+        return User::with(['posts', 'followers', 'following'])->withCount(['posts', 'followers', 'following'])->get();
     }
 
 
@@ -35,8 +35,10 @@ class UsersController extends Controller
             ->withCount(['posts', 'likes', 'comments', 'followers', 'following', 'reposts'])
             ->find($id);
 
+        $user->allPosts = $user->getPosts();
 
-        return response()->json($user->getAll());
+
+        return response()->json($user);
     }
 
 
