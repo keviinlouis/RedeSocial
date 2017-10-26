@@ -72,7 +72,8 @@ class PostsController extends Controller
      */
     public function update($id, Request $request)
     {
-        $this->validateRequest($request->toArray() + ["id" => $id], ["text" => "required|min:1|max:140", "id" => "required|numeric|exists:posts"]);
+        $request->merge(["id" => $id]);
+        $this->validateRequest($request->toArray(), ["text" => "required|min:1|max:140", "id" => "required|numeric|exists:posts"]);
 
         $post = Auth::user()->posts()->with(['comments', 'likes', 'user'])->find($id);
 

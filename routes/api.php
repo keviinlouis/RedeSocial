@@ -57,6 +57,7 @@ Route::group(['middleware' => 'jwt.auth'], function (){
     //Messages
         Route::post('/message', 'MessagesController@storage')->name('createApiMessage');
         Route::post('/message/{id}', 'MessagesController@opened')->name('openedApiMessage');
+        Route::put('/message/{id}', 'MessagesController@update')->name('updateApiMessage');
         Route::delete('/message/{id}', 'MessagesController@destroy')->name('deleteApiMessage');
         Route::get('/message/{id}', 'MessagesController@show')->name('showApiMessage');
 

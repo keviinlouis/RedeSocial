@@ -30,8 +30,9 @@ class CommentsController extends Controller
 
     public function storage($id, Request $request)
     {
+        $request->merge(["id" => $id]);
         $this->validateRequest(
-            $request->toArray() + ["id" => $id],
+            $request->toArray(),
                 [
                     "text" => "required|min:1|max:140",
                     "id" => "required|numeric|exists:posts"
@@ -48,8 +49,9 @@ class CommentsController extends Controller
 
     public function update($id, Request $request)
     {
+        $request->merge(["id" => $id]);
         $this->validateRequest(
-            $request->toArray() + ["id" => $id],
+            $request->toArray(),
                 [
                     "text" => "required|min:1|max:140",
                     "id" => "required||exists:comments"

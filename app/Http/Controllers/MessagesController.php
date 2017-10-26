@@ -18,6 +18,7 @@ class MessagesController extends Controller
         }
         return response()->json($message, Response::HTTP_OK);
     }
+
     public function storage(Request $request){
         $this->validateRequest($request->toArray(), [
             'receiver_id' =>
@@ -38,6 +39,23 @@ class MessagesController extends Controller
         }
         return response()->json($message, Response::HTTP_CREATED);
     }
+
+    public function update($id, Request $request){
+        $request->merge(["id" => $id]);
+        $this->validateRequest($request->toArray(), ["id" => "required|exists:messages",  'text' => 'required|string']);
+
+        $message = Auth::user()->messagesSent()->find($id);
+
+        if(is_null($message)){
+            return response()->json(['messages' => ['id' => ["Alteração não autorizada"]]], Response::HTTP_UNAUTHORIZED);
+        }else{
+            if(!$message->update(["text" => $request["text"]])){
+                return response()->json(['messages' => "Error Interno"], Response::HTTP_INTERNAL_SERVER_ERROR);
+            }
+        }
+        return response()->json($message, Response::HTTP_OK);
+    }
+
     public function destroy($id){
         $this->validateRequest(["id" => $id], ["id" => "required|exists:messages"]);
 
@@ -52,6 +70,7 @@ class MessagesController extends Controller
         }
         return response()->json($message, Response::HTTP_OK);
     }
+
     public function opened($id){
         $this->validateRequest(["id" => $id], ["id" => "required|exists:messages"]);
 
