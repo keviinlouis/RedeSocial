@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\NewMessage;
 use Auth;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -37,6 +38,7 @@ class MessagesController extends Controller
         if(!$message = Auth::user()->messagesSent()->create($data)){
             return response()->json(['messages' => "Error Interno"], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
+        broadcast(new NewMessage($message))->toOthers();
         return response()->json($message, Response::HTTP_CREATED);
     }
 

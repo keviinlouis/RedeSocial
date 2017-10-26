@@ -2,6 +2,7 @@
 
 namespace App\Events;
 
+use App\Models\Message;
 use App\Models\Post;
 use App\Models\User;
 use Auth;
@@ -13,22 +14,22 @@ use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 
-class NewPost implements ShouldBroadcast
+class NewMessage implements ShouldBroadcast
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
-    public $post;
+    public $message;
     public $user;
 
     /**
      * Create a new event instance.
      *
-     * @param Post $post
+     * @param $message
      */
-    public function __construct(Post $post)
+    public function __construct($message)
     {
-        $this->post = $post;
-        $this->user = $post->user;
+        $this->message = $message;
+        $this->user = $message->receiver;
     }
 
     /**
@@ -38,6 +39,6 @@ class NewPost implements ShouldBroadcast
      */
     public function broadcastOn()
     {
-        return new PresenceChannel('posts.'.$this->user->id);
+        return new PresenceChannel('message'.$this->user->id);
     }
 }

@@ -1,25 +1,18 @@
 let express = require('express');
 let app = express();
 let http = require('http').Server(app);
-let io = require('socket.io')(http);
-let Redis = require('ioredis');
-let redis = new Redis();
 
-redis.subscribe('test-channel', function(err, count) {
+import Echo from "laravel-echo"
 
-});
-redis.on('message', function(channel, message) {
-    console.log('Message Recieved: ' + message);
-    message = JSON.parse(message);
-    io.emit(channel + ':' + message.event, message.data);
+window.Echo = new Echo({
+    broadcaster: 'pusher',
+    key: '07f43a070fddea604b98'
 });
 
-io.on("connection", function (socket) {
-    socket.on("newPost", function(post){
-        console.log("Joined: " + post);
-        socket.broadcast.emit("haveANewPost", post)
+Echo.channel('message'+user.id)
+    .listen('NewMessage', (e) => {
+        console.log(e);
     });
-});
 
 http.listen(3000, function(){
     console.log('listening on port 3000');

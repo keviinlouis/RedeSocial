@@ -65,7 +65,6 @@ const app = new Vue({
             this.busy.posts = true;
             axios.get('/posts/'+this.posts.length).then(response => {
                 this.posts.push(...response.data);
-
                 if(response.data.length < 10){
                     this.emptyPosts = true;
                 }
@@ -142,9 +141,9 @@ const app = new Vue({
             this.userSession =  response.data;
         });
 
-    //    Echo.join('posts')
-    //        .listen('newPost', (e) => {
-    //            this.posts.unshift(e.post);
-     //       });
+        Echo.join(`messages.${userSession.id}`)
+            .listen('NewMessage', (e) => {
+                console.log(e.message);
+            });
     }
 });

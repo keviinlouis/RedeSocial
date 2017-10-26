@@ -11,10 +11,17 @@
 |
 */
 
+use App\Models\Message;
+use App\Models\User;
+
 Broadcast::channel('App.User.{id}', function ($user, $id) {
     return (int) $user->id === (int) $id;
 });
 
-Broadcast::channel('posts', function ($user) {
-    return $user;
+Broadcast::channel('posts.{id}', function (User $user, $id) {
+    return in_array($user->following()->pluck('id'), [$id])===true;
+});
+
+Broadcast::channel('message.{id}', function ($user, Message $message) {
+    return $user->id === $message->receiver_id;
 });
