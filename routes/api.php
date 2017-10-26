@@ -51,5 +51,14 @@ Route::group(['middleware' => 'jwt.auth'], function (){
         Route::post('/user/{id}/follow', 'UsersController@follow')->name('followApiUser');
         Route::post('/users/suggested/{limit?}', 'UsersController@suggested')->name('suggestedApiUsers');
         Route::get('/user/{id}/following', 'UsersController@following')->name('followingApiUsers');
+        Route::get('/user/messages/new', 'UsersController@newMessages')->name('showNewApiMessage');
+        Route::get('/user/messages/{id}', 'UsersController@channel')->name('showNewApiMessage');
+
+    //Messages
+        Route::post('/message', 'MessagesController@storage')->name('createApiMessage');
+        Route::post('/message/{id}', 'MessagesController@opened')->name('openedApiMessage');
+        Route::delete('/message/{id}', 'MessagesController@destroy')->name('deleteApiMessage');
+        Route::get('/message/{id}', 'MessagesController@show')->name('showApiMessage');
+
 
 });

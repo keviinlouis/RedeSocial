@@ -22,6 +22,10 @@ class Post extends Model
         "text", "user_id"
     ];
 
+    protected $dates = [
+      'created_at', 'updated_at', 'pivot_created_at', 'pivot_updated_at'
+    ];
+
     public function user(){
         return $this->belongsTo('App\Models\User', 'user_id');
     }

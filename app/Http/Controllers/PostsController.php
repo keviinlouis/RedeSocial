@@ -56,7 +56,7 @@ class PostsController extends Controller
         ];
 
         if (!$post = Auth::user()->posts()->create($data)) {
-            return response()->json(['message' => "Error Interno"], Response::HTTP_INTERNAL_SERVER_ERROR);
+            return response()->json(['messages' => "Error Interno"], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
 
         //TODO Events
@@ -77,9 +77,9 @@ class PostsController extends Controller
         $post = Auth::user()->posts()->with(['comments', 'likes', 'user'])->find($id);
 
         if(is_null($post)){
-            return response()->json(['message' => ["id" => ["Alteração não autorizada"]]], Response::HTTP_UNAUTHORIZED);
+            return response()->json(['messages' => ["id" => ["Alteração não autorizada"]]], Response::HTTP_UNAUTHORIZED);
         }else if (!$post->update($request->all())) {
-            return response()->json(['message' => "Error Interno"], Response::HTTP_INTERNAL_SERVER_ERROR);
+            return response()->json(['messages' => "Error Interno"], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
         return response()->json($post);
     }
@@ -95,9 +95,9 @@ class PostsController extends Controller
         $post = Auth::user()->posts()->with(['comments', 'likes', 'user'])->find($id);
 
         if(is_null($post)){
-            return response()->json(['message' => ["id" => ["Alteração não autorizada"]]], Response::HTTP_UNAUTHORIZED);
+            return response()->json(['messages' => ["id" => ["Alteração não autorizada"]]], Response::HTTP_UNAUTHORIZED);
         }else if (!$post->delete()) {
-            return response()->json(['message' => "Error Interno"], Response::HTTP_INTERNAL_SERVER_ERROR);
+            return response()->json(['messages' => "Error Interno"], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
 
         return response()->json($post);
@@ -113,7 +113,7 @@ class PostsController extends Controller
         $post = Post::with('likes')->find($id);
 
         if (!$action = $post->likes()->toggle(Auth::user()->id)) {
-            return response()->json(['message' => "Error Interno"], Response::HTTP_INTERNAL_SERVER_ERROR);
+            return response()->json(['messages' => "Error Interno"], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
         if(count($action["attached"])>0){
             $action = "liked";
@@ -130,7 +130,7 @@ class PostsController extends Controller
         $post = Post::with(['likes', 'user'])->find($id);
 
         if (!$action = $post->reposts()->toggle(Auth::user()->id)) {
-            return response()->json(['message' => "Error Interno"], Response::HTTP_INTERNAL_SERVER_ERROR);
+            return response()->json(['messages' => "Error Interno"], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
         if(count($action["attached"])>0){
             $action = "reposted";

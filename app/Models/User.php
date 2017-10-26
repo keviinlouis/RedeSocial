@@ -6,7 +6,7 @@ use Auth;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Tymon\JWTAuth\Contracts\JWTSubject;
-
+use Illuminate\Support\Facades\DB;
 /**
  * App\Models\User
  *
@@ -54,62 +54,45 @@ class User extends Authenticatable implements JWTSubject
     }
 
     public function reposts(){
-        return $this->belongsToMany('App\Models\Post', 'reposts', 'user_id', 'post_id')->withTimestamps();
+        return $this->belongsToMany('App\Models\Post', 'reposts', 'user_id', 'post_id')
+            ->withTimestamps();
     }
 
-    public function getPosts(){
-
-        $posts = $this->posts()->with('user')->orderByDesc('created_at')->get();
-
-        $reposts = $this->reposts()->with(['user'])->get();
-
-        foreach($reposts as $repost){
-            $meio = intval(ceil(count($posts)/2))-1;
-            $find = false;
-            $post = $posts[$meio];
-            $created = $post->created_at;
-
-            if(isset($post->pivot)){
-                $created = $post->pivot->created_at;
-            }
-            if($created->gt($repost->pivot->created_at)){
-
-                for($i = $meio+1; $i < count($posts); $i++){
-                    $post = $posts[$i];
-                    $created = $post->created_at;
-                    if(isset($post->pivot)){
-                        $created = $post->pivot->created_at;
-                    }
-                    if($created->lt($repost->pivot->created_at)){
-                        $posts->splice($i, 0, $repost);
-                        $find = true;
-                    }
-                }
-                if(!$find) {
-                    $posts->push($repost);
-                }
-            }else if($created->lt($repost->pivot->created_at)){
-                for($i = $meio-1; $i >= 0; $i--){
-                    $post = $posts[$i];
-                    $created = $post->created_at;
-                    if(isset($post->pivot->created_at)){
-                        $created = $post->pivot->created_at;
-                    }
-                    if($created->gt($repost->pivot->created_at)){
-                        $posts->splice($i+1, 0, [$repost]);
-                        $find = true;
-                    }
-                }
-                if(!$find) {
-                    $posts->prepend($repost);
-                }
-            }
-        }
-        return $posts;
+    public function allposts(){
+        $select = ['*',
+            'posts.user_id AS pivot_user_id',
+             'posts.id AS pivot_post_id',
+              'posts.created_at AS pivot_created_at',
+              'posts.updated_at AS pivot_updated_at'
+        ];
+        $posts = $this->posts()->select($select);
+        return $this->reposts()->union($posts)->orderByDesc('pivot_created_at')->with(["user"]);
     }
 
     public function comments(){
         return $this->hasMany('App\Models\Comment', 'user_id');
+    }
+
+    public function messagesReceived(){
+        return $this->hasMany('App\Models\Message', 'receiver_id');
+    }
+    public function messagesSent(){
+        return $this->hasMany('App\Models\Message', 'sender_id');
+    }
+    public function newMessages(){
+        return $this->messagesReceived()->where('opened', '=', 0)->with('sender');
+    }
+    public function channel(User $user){
+        $sent = $this->messagesSent()->where('receiver_id', '=', $user->id);
+        $messages = $user->messagesSent()
+            ->where('receiver_id', '=', Auth::id())
+            ->with(['sender', 'receiver'])
+            ->union($sent)
+            ->orderByDesc('created_at')->get();
+            return $messages;
+    }
+    public function messages(){
+        return $this->messagesReceived()->union($this->messagesSent());
     }
 
     public function likes(){

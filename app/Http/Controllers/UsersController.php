@@ -28,15 +28,11 @@ class UsersController extends Controller
      */
     public function show($id)
     {
-
         $this->validateRequest(['id' => $id], ["id" => "required|numeric|exists:users"]);
 
-        $user = User::with(['posts', 'likes', 'comments', 'followers', 'following', 'reposts'])
-            ->withCount(['posts', 'likes', 'comments', 'followers', 'following', 'reposts'])
+        $user = User::with(['posts', 'likes', 'comments', 'followers', 'following', 'reposts', 'allposts'])
+            ->withCount(['posts', 'likes', 'comments', 'followers', 'following', 'reposts', 'allposts'])
             ->find($id);
-
-        $user->allPosts = $user->getPosts();
-
 
         return response()->json($user);
     }
@@ -123,6 +119,20 @@ class UsersController extends Controller
         ]);
     }
 
+    public function newMessages(){
+        $messages = Auth::user()->newMessages();
+        $listMessages = $messages->get();
+        $messages->update(['opened' => 1]);
 
+        return response()->json(["_meta" => ["length" => count($listMessages)], "messages" => $listMessages]);
+    }
+    public function channel($id){
+        $this->validateRequest(["id" => $id], ["id" => "required|exists:users"]);
+
+        $messages = Auth::user()->channel(User::find($id));
+
+        return response()->json(["_meta" => ["length" => count($messages)], "messages" => $messages]);
+
+    }
 
 }
