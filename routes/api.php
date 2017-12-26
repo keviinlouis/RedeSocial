@@ -15,6 +15,8 @@ Route::post('/auth/login', 'AuthController@login');
 Route::post('/auth/register', 'AuthController@register');
 
 Route::group(['middleware' => 'jwt.auth'], function (){
+    Route::get('/auth/user', 'AuthController@view');
+    Route::delete('/auth/delete', 'AuthController@destroy');
 
     //Posts
         Route::get('/posts/{start?}/{limit?}', 'PostsController@index')->name('listApiPosts');
@@ -27,9 +29,8 @@ Route::group(['middleware' => 'jwt.auth'], function (){
 
         //Adicionais
         Route::post('/post/{id}/like', 'PostsController@like')->name('likeApiPost');
-        Route::post('/post/{id}/repost', 'PostsController@repost')->name('repostApiPost'); //TODO
+        Route::post('/post/{id}/repost', 'PostsController@repost')->name('repostApiPost');
         Route::get('/post/{id}/comments', 'PostsController@comments')->name('listCommentsApiPost');
-
 
         //Comentarios
         Route::get('/comments', 'CommentsController@index')->name('listApiComments');
@@ -60,6 +61,5 @@ Route::group(['middleware' => 'jwt.auth'], function (){
         Route::put('/message/{id}', 'MessagesController@update')->name('updateApiMessage');
         Route::delete('/message/{id}', 'MessagesController@destroy')->name('deleteApiMessage');
         Route::get('/message/{id}', 'MessagesController@show')->name('showApiMessage');
-
 
 });
