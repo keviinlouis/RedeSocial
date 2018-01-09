@@ -16,11 +16,33 @@ class Controller extends BaseController
      * @param array $data
      * @param array $rules
      */
-    protected function validateRequest(Array $data, Array $rules){
+    protected function validateRequest(Array $data, Array $rules)
+    {
         $validator = Validator::make($data, $rules);
-        if($validator->fails()){
+        if ($validator->fails()) {
             response()->json(["messages" => $validator->messages()->toArray()], 400)->send();
             exit;
         }
+    }
+
+    protected function makeNextPageLink($route, $start, $limit, $count)
+    {
+        return $count >= $limit ?
+            route($route, ["start" => $start + $limit, "limit" => $limit]) : null;
+    }
+
+    protected function makePreviousPageLink($route, $start, $limit)
+    {
+        $start - $limit >= 0 ?
+            route($route, ["start" => $start - $limit, "limit" => $limit]) : null;
+    }
+
+    protected function makeMeta($route, $start, $limit, $count)
+    {
+        return [
+            "_prev" => $this->makePreviousPageLink($route, $start, $limit),
+            "_next" => $this->makeNextPageLink($route, $start, $limit, $count),
+            "length" => $count
+        ];
     }
 }

@@ -154,7 +154,7 @@ class User extends Authenticatable implements JWTSubject
     {
         $actualUsers = Auth::user()->following()->pluck('id')->toArray();
         if (!is_null($id)) {
-            $actualUsers = $actualUsers + $id;
+            $actualUsers = array_merge($actualUsers, $id);
         }
         $actualUsers[count($actualUsers)] = Auth::user()->id;
 

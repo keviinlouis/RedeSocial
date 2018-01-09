@@ -14,8 +14,15 @@ use Tymon\JWTAuth\Exceptions\JWTException;
 class AuthController extends Controller
 {
 
-    public function view(){
-        return response()->json(Auth::user()->load(['posts', 'followers', 'following']));
+    public function view()
+    {
+        return response()->json(Auth::user()->load([
+            'posts' => function (\Illuminate\Database\Eloquent\Relations\HasMany $qr) {
+                $qr->orderByDesc('created_at')
+                    ->limit(10);
+            },
+            'posts.user',
+            'followers', 'following']));
     }
 
     public function login(Request $request)
@@ -25,7 +32,7 @@ class AuthController extends Controller
 
         try {
             // attempt to verify the credentials and create a token for the user
-            if (! $token = JWTAuth::attempt($credentials)) {
+            if (!$token = JWTAuth::attempt($credentials)) {
                 return response()->json(['error' => 'invalid_credentials'], 401);
             }
         } catch (JWTException $e) {
@@ -34,16 +41,26 @@ class AuthController extends Controller
         }
 
         // all good so return the token
-        return response()->json(compact('token'));
+        $response = compact('token');
+        $response["user"] = Auth::user()->load([
+            'posts' => function (\Illuminate\Database\Eloquent\Relations\HasMany $qr) {
+                $qr->orderByDesc('created_at')
+                    ->limit(10);
+            },
+            'posts.user',
+            'followers',
+            'following'
+        ]);
+        return response()->json($response);
     }
 
     public function register(Request $request)
     {
         // grab credentials from the request
         $credentials = $request->only(['email', 'password', 'name']);
-            
+
         $this->validateRequest(
-            $request->only(['email', 'password','password_confirmation', 'name']),
+            $request->only(['email', 'password', 'password_confirmation', 'name']),
             $this->registerRules()
         );
 
@@ -55,7 +72,7 @@ class AuthController extends Controller
 
         try {
             // attempt to verify the credentials and create a token for the user
-            if (! $token = JWTAuth::attempt($request->only(['email', 'password']))) {
+            if (!$token = JWTAuth::attempt($request->only(['email', 'password']))) {
                 return response()->json(['error' => 'invalid_credentials'], 401);
             }
         } catch (JWTException $e) {
@@ -65,13 +82,14 @@ class AuthController extends Controller
 
         // all good so return the token
         $response = compact('token');
-        $response["user"] = Auth::getUser();
-        return response()->json();
+        $response["user"] = Auth::user()->load(['posts', 'followers', 'following']);
+        return response()->json($response);
     }
 
-    public function destroy(Request $request){
+    public function destroy(Request $request)
+    {
         $this->validateRequest(
-            $request->only(['email', 'password','password_confirmation', 'name']),
+            $request->only(['email', 'password', 'password_confirmation', 'name']),
             $this->destroyRules()
         );
 
@@ -85,14 +103,16 @@ class AuthController extends Controller
 
     }
 
-    public function loginRules(){
+    public function loginRules()
+    {
         return [
             'email' => 'required|string|email|max:255|exists:users,email',
             'password' => 'required|string|min:6|confirmed',
         ];
     }
 
-    public function registerRules(){
+    public function registerRules()
+    {
         return [
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users',
@@ -100,7 +120,8 @@ class AuthController extends Controller
         ];
     }
 
-    public function destroyRules(){
+    public function destroyRules()
+    {
         return [
             'email' => [
                 'required',

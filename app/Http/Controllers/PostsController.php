@@ -14,19 +14,34 @@ class PostsController extends Controller
     /**
      * @param int $start
      * @param int $limit
+     * @param Request $request
      * @return \Illuminate\Http\JsonResponse
      */
-    public function index($start = 0, $limit = 10)
+    public function index($start = 0, $limit = 10, Request $request)
     {
         $this->validateRequest(['start' => $start, 'limit' => $limit], ["start" => "numeric"]);
 
-        $posts = Auth::user()->followingPosts($start, $limit);
+        $posts = Post::orderBy('created_at', 'desc')
+            ->with(['user', 'comments'])
+            ->withCount(['likes', 'comments'])
+            ->skip($start)
+            ->take($limit);
 
-        $count = count($posts);
-        $nextPage = $count >= $limit ? route('listApiPosts', ["start" =>  $start + $limit, "limit" => $limit ]) : null;
-        $prevPage = $start - $limit >= 0 ? route('listApiPosts', ["start" =>  $start - $limit, "limit" => $limit ]) : null;
+        if(!$request->has('id')){
+            $ids = Auth::user()->following()->pluck('id')->toArray();
+            $ids[] = Auth::id();
+            $posts->whereIn('user_id', $ids);
 
-        return response()->json(["_meta" => ["_prev" => $prevPage, "_next" => $nextPage, "lenght" => $count], "posts" => $posts]);
+        }else{
+            $posts->where('user_id', $request->has('id'));
+        }
+
+        $posts = $posts->get();
+
+        return response()->json([
+            "_meta" => $this->makeMeta('listApiPosts', $start, $limit, count($posts)),
+            "posts" => $posts
+        ]);
 
     }
 

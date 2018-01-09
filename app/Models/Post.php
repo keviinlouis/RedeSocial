@@ -38,10 +38,6 @@ class Post extends Model
         return $this->morphTo();
     }
 
-    public function participants()
-    {
-        return $this->morphMany(Participant::class, 'participatable');
-    }
     public function likes(){
         return $this->belongsToMany('App\Models\User', 'post_likes', 'post_id')->withTimestamps();
     }

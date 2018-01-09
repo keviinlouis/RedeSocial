@@ -14,7 +14,7 @@ use Illuminate\Support\Facades\Route;
 Route::post('/auth/login', 'AuthController@login');
 Route::post('/auth/register', 'AuthController@register');
 
-Route::group(['middleware' => 'jwt.auth'], function (){
+Route::group(['middleware' => ['jwt.auth']], function (){
     Route::get('/auth/user', 'AuthController@view');
     Route::delete('/auth/delete', 'AuthController@destroy');
 
@@ -50,8 +50,7 @@ Route::group(['middleware' => 'jwt.auth'], function (){
 
         //Adicionais
         Route::post('/user/{id}/follow', 'UsersController@follow')->name('followApiUser');
-        Route::post('/users/suggested/{limit?}', 'UsersController@suggested')->name('suggestedApiUsers');
-        Route::get('/user/{id}/following', 'UsersController@following')->name('followingApiUsers');
+        Route::post('/user/suggested/{limit?}', 'UsersController@suggested')->name('suggestedApiUsers');
         Route::get('/user/messages/new', 'UsersController@newMessages')->name('showNewApiMessage');
         Route::get('/user/messages/{id}', 'UsersController@channel')->name('showNewApiMessage');
 

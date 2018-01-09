@@ -88,10 +88,10 @@ class Handler extends ExceptionHandler
             return response()->json(['messages' => [$e->getMessage()]], 500);
         }
 
-        if(!$request->isJson()){
+//        if(!$request->isJson()){
             return parent::render($request, $e);
-        }
+//        }
 
-        return response()->json(['messages' => [$e->getMessage()]], 500);
+//        return response()->json(['messages' => [$e->getMessage()]], 500);
     }
 }

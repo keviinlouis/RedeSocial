@@ -30,9 +30,25 @@ class UsersController extends Controller
     {
         $this->validateRequest(['id' => $id], ["id" => "required|numeric|exists:users"]);
 
-        $user = User::with(['posts', 'likes', 'comments', 'followers', 'following', 'reposts', 'allposts'])
-            ->withCount(['posts', 'likes', 'comments', 'followers', 'following', 'reposts', 'allposts'])
-            ->find($id);
+        $user = User::with([
+            'posts',
+            'likes',
+            'comments',
+            'followers',
+            'following',
+            'reposts',
+            'allposts'
+        ])
+        ->withCount([
+            'posts',
+            'likes',
+            'comments',
+            'followers',
+            'following',
+            'reposts',
+            'allposts'
+        ])
+        ->find($id);
 
         return response()->json($user);
     }
@@ -71,12 +87,12 @@ class UsersController extends Controller
         if (Auth::user()->id == $id) {
             return response()->json(["message" => ["id" => ["id selecionado é inválido."]]], Response::HTTP_BAD_REQUEST);
         }
-        if (!$action = Auth::user()->following()->toggle($id)){
+        if (!$action = Auth::user()->following()->toggle($id)) {
             return response()->json(['message' => "Error Interno"], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
-        if(count($action["attached"])>0){
+        if (count($action["attached"]) > 0) {
             $action = "followed";
-        }else{
+        } else {
             $action = "unfollowed";
         }
         return response()->json(["action" => $action]);
@@ -90,27 +106,25 @@ class UsersController extends Controller
     public function suggested($limit = 5, Request $request)
     {
         $this->validateRequest(["limit" => $limit], ["limit" => "numeric"]);
-
         $actualShowingUsers = [];
-        if($request->has('actualShowingUsers')) {
-            if (is_array($request["actualShowingUsers"])){
-                foreach ($request["actualShowingUsers"] as $key => $id){
+        if ($request->has('actualShowingUsers')) {
+            if (is_array($request["actualShowingUsers"])) {
+                foreach ($request["actualShowingUsers"] as $key => $id) {
                     $id = intval($id);
-                    if($id>0){
+                    if ($id > 0) {
                         $actualShowingUsers[] = $id;
-                    }else{
-                        return response()->json(["message" => ["actualShowingUsers" => ["id {".$request['actualShowingUsers'][$key]."} selecionado é inválido.", $request['actualShowingUsers'][$key]]]], Response::HTTP_BAD_REQUEST);
+                    } else {
+                        return response()->json(["message" => ["actualShowingUsers" => ["id {" . $request['actualShowingUsers'][$key] . "} selecionado é inválido.", $request['actualShowingUsers'][$key]]]], Response::HTTP_BAD_REQUEST);
                     }
                 }
                 $actualShowingUsers = $request["actualShowingUsers"];
-            }else if(intval($request["actualShowingUsers"])>0){
+            } else if (intval($request["actualShowingUsers"]) > 0) {
                 $actualShowingUsers = [intval($request["actualShowingUsers"])];
-            }else{
+            } else {
                 return response()->json(["message" => ["actualShowingUsers" => ["id selecionado é inválido."]]], Response::HTTP_BAD_REQUEST);
             }
         }
-
-        $notFollowingUsers = Auth::user()->notFollowing($actualShowingUsers,$limit );
+        $notFollowingUsers = Auth::user()->notFollowing($actualShowingUsers, $limit);
 
         return response()->json([
             'suggestedUsers' => $notFollowingUsers,
@@ -119,14 +133,17 @@ class UsersController extends Controller
         ]);
     }
 
-    public function newMessages(){
+    public function newMessages()
+    {
         $messages = Auth::user()->newMessages();
         $listMessages = $messages->get();
         $messages->update(['opened' => 1]);
 
         return response()->json(["_meta" => ["length" => count($listMessages)], "messages" => $listMessages]);
     }
-    public function channel($id){
+
+    public function channel($id)
+    {
         $this->validateRequest(["id" => $id], ["id" => "required|exists:users"]);
 
         $messages = Auth::user()->channel(User::find($id));
