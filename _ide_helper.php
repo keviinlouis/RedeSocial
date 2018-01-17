@@ -1,7 +1,7 @@
 <?php
 /**
  * A helper file for Laravel 5, to provide autocomplete information to your IDE
- * Generated for Laravel 5.5.27 on 2017-12-23.
+ * Generated for Laravel 5.5.27 on 2018-01-17.
  *
  * @author Barry vd. Heuvel <barryvdh@gmail.com>
  * @see https://github.com/barryvdh/laravel-ide-helper
@@ -13454,7 +13454,7 @@ namespace Tymon\JWTAuth\Facades {
         /**
          * Get the token.
          *
-         * @return \Tymon\JWTAuth\Token|false 
+         * @return \Tymon\JWTAuth\Token|null 
          * @static 
          */ 
         public static function getToken()
@@ -13527,16 +13527,16 @@ namespace Tymon\JWTAuth\Facades {
         }
         
         /**
-         * Check if the provider matches the one saved in the token.
+         * Check if the subject model matches the one saved in the token.
          *
-         * @param string|object $provider
+         * @param string|object $model
          * @return bool 
          * @static 
          */ 
-        public static function checkProvider($provider)
+        public static function checkSubjectModel($model)
         {
             //Method inherited from \Tymon\JWTAuth\JWT            
-            return \Tymon\JWTAuth\JWTAuth::checkProvider($provider);
+            return \Tymon\JWTAuth\JWTAuth::checkSubjectModel($model);
         }
         
         /**
@@ -13575,6 +13575,19 @@ namespace Tymon\JWTAuth\Facades {
         {
             //Method inherited from \Tymon\JWTAuth\JWT            
             return \Tymon\JWTAuth\JWTAuth::setRequest($request);
+        }
+        
+        /**
+         * Set whether the subject should be "locked".
+         *
+         * @param bool $lock
+         * @return $this 
+         * @static 
+         */ 
+        public static function lockSubject($lock)
+        {
+            //Method inherited from \Tymon\JWTAuth\JWT            
+            return \Tymon\JWTAuth\JWTAuth::lockSubject($lock);
         }
         
         /**
