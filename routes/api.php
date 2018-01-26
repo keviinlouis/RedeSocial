@@ -22,7 +22,7 @@ Route::group(['middleware' => ['jwt.auth', 'api']], function (){
     Route::delete('/auth/delete', 'AuthController@destroy');
 
     //Posts
-        Route::get('/posts/{start?}/{limit?}', 'PostsController@index')->name('listApiPosts');
+            Route::get('/posts/{start?}/{limit?}', 'PostsController@index')->name('listApiPosts');
 
         //CRUD
         Route::get('/post/{id}', 'PostsController@show')->name('showApiPost');

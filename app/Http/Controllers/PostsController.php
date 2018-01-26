@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\NewPost;
 use Auth;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -69,13 +70,15 @@ class PostsController extends Controller
         $data = [
             "text" => $request["text"]
         ];
-
+        /**
+         * @var $post Post
+         */
         if (!$post = Auth::user()->posts()->create($data)) {
             return response()->json(['messages' => "Error Interno"], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
 
         //TODO Events
-        //broadcast(new NewPost($post, Auth::user(), $view))->toOthers();
+        event(new NewPost($post));
 
         return response()->json(Post::with(['user'])->find($post->id), Response::HTTP_CREATED);
     }

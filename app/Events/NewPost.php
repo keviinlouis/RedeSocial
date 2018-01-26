@@ -27,7 +27,7 @@ class NewPost implements ShouldBroadcast
      */
     public function __construct(Post $post)
     {
-        $this->post = $post;
+        $this->post = $post->load('user');
         $this->user = $post->user;
     }
 
@@ -38,6 +38,6 @@ class NewPost implements ShouldBroadcast
      */
     public function broadcastOn()
     {
-        return new PresenceChannel('posts.'.$this->user->id);
+        return new Channel('new-posts-1');
     }
 }
