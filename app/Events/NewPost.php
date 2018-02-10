@@ -4,11 +4,8 @@ namespace App\Events;
 
 use App\Models\Post;
 use App\Models\User;
-use Auth;
 use Illuminate\Broadcasting\Channel;
 use Illuminate\Queue\SerializesModels;
-use Illuminate\Broadcasting\PrivateChannel;
-use Illuminate\Broadcasting\PresenceChannel;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
@@ -38,6 +35,6 @@ class NewPost implements ShouldBroadcast
      */
     public function broadcastOn()
     {
-        return new Channel('new-posts-1');
+        return $this->user->followers()->select(\DB::raw("CONCAT('new-posts-',users.id) as channel"))->pluck('channel')->toArray();
     }
 }

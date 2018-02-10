@@ -17,7 +17,7 @@ Route::group(['middleware' => ['api']], function (){
 });
 
 
-Route::group(['middleware' => ['jwt.auth', 'api']], function (){
+Route::group(['middleware' => ['jwt', 'api']], function (){
     Route::get('/auth/user', 'AuthController@view');
     Route::delete('/auth/delete', 'AuthController@destroy');
 
