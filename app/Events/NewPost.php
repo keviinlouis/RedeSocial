@@ -36,5 +36,6 @@ class NewPost implements ShouldBroadcast
     public function broadcastOn()
     {
         return $this->user->followers()->select(\DB::raw("CONCAT('new-posts-',users.id) as channel"))->pluck('channel')->toArray();
+
     }
 }
